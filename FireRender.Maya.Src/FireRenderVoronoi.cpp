@@ -19,6 +19,9 @@ namespace
 	namespace Attribute
 	{
 		MObject	uv;
+		MObject scale;
+		MObject randomness;
+		MObject dimension;
 		MObject	output;
 		MObject mapChannel;
 	}
@@ -37,22 +40,37 @@ MStatus FireMaya::Voronoi::initialize()
 	Attribute::uv = nAttr.create("uvCoord", "uv", MFnNumericData::k2Float);
 	MAKE_INPUT(nAttr);
 
+	Attribute::scale = nAttr.create("scale", "s", MFnNumericData::kFloat, 1);
+	MAKE_INPUT(nAttr);
+
+	Attribute::randomness = nAttr.create("randomness", "r", MFnNumericData::kFloat, 1);
+	MAKE_INPUT(nAttr);
+
 	Attribute::output = nAttr.createColor("out", "o");
 	MAKE_OUTPUT(nAttr);
-
 
 	Attribute::mapChannel = eAttr.create("mapChannel", "mc", 0);
 	eAttr.addField("0", kTexture_Channel0);
 	eAttr.addField("1", kTexture_Channel1);
 	MAKE_INPUT_CONST(eAttr);
 
+	Attribute::dimension = eAttr.create("dimensions", "d", 0);
+	eAttr.addField("2D", 2);
+	eAttr.addField("3D", 3);
+	MAKE_INPUT_CONST(eAttr);
 
 	CHECK_MSTATUS(addAttribute(Attribute::uv));
+	CHECK_MSTATUS(addAttribute(Attribute::scale));
+	CHECK_MSTATUS(addAttribute(Attribute::randomness));
 	CHECK_MSTATUS(addAttribute(Attribute::output));
 	CHECK_MSTATUS(addAttribute(Attribute::mapChannel));
+	CHECK_MSTATUS(addAttribute(Attribute::dimension));
 
 	CHECK_MSTATUS(attributeAffects(Attribute::uv, Attribute::output));
+	CHECK_MSTATUS(attributeAffects(Attribute::scale, Attribute::output));
+	CHECK_MSTATUS(attributeAffects(Attribute::randomness, Attribute::output));
 	CHECK_MSTATUS(attributeAffects(Attribute::mapChannel, Attribute::output));
+	CHECK_MSTATUS(attributeAffects(Attribute::dimension, Attribute::output));
 
 	return MS::kSuccess;
 }
@@ -76,7 +94,16 @@ frw::Value FireMaya::Voronoi::GetValue(const Scope& scope) const
 	}
 
 	auto uv = scope.GetConnectedValue(shaderNode.findPlug("uvCoord", false)) | scope.MaterialSystem().ValueLookupUV(mapChannel);
-	valueNode.SetValue(RPR_MATERIAL_INPUT_UV, uv);	// <- offset added because FR mirrors checker at origin
+	valueNode.SetValue(RPR_MATERIAL_INPUT_UV, uv);
+
+	auto scale = scope.GetValue(shaderNode.findPlug(Attribute::scale, false));
+	valueNode.SetValue(RPR_MATERIAL_INPUT_SCALE, scale);
+
+	auto randomness = scope.GetValue(shaderNode.findPlug(Attribute::randomness, false));
+	valueNode.SetValue(RPR_MATERIAL_INPUT_RANDOMNESS, randomness);
+
+	auto dimension = scope.GetValue(shaderNode.findPlug(Attribute::dimension, false));
+	valueNode.SetValue(RPR_MATERIAL_INPUT_DIMENSION, dimension);
 
 	return valueNode;
 }
