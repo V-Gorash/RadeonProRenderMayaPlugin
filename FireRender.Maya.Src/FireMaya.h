@@ -72,6 +72,7 @@ namespace FireMaya
 			FireRenderGradient,
 			FireRenderLookup,
 			FireRenderDot,
+			FireRenderVoronoi,
 			FireRenderTexture,
 			FireRenderFresnelSchlick,
 			FireRenderNoise,
