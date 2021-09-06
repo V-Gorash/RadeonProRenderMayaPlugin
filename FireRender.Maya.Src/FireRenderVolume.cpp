@@ -430,7 +430,7 @@ bool NorthstarRPRVolume::TranslateVolume()
 	m_emissionGrid.Reset();
 
 
-	if (vdata.densityGrid.IsValid()) // grid exists
+	if (vdata.densityGrid.IsValid() && vdata.densityGrid.gridOnIndices.size() > 0) // grid exists
 	{
 		m_densityGrid = Context().CreateVolumeGrid(
 			vdata.densityGrid.gridSizeX,
@@ -450,7 +450,7 @@ bool NorthstarRPRVolume::TranslateVolume()
 		volumeShader.xSetParameterF(RPR_MATERIAL_INPUT_DENSITY, maxDensityValue, 1.0f, 1.0f, 1.0f);
 	}
 	
-	if (vdata.albedoGrid.IsValid()) // grid exists
+	if (vdata.albedoGrid.IsValid() && vdata.albedoGrid.gridOnIndices.size() > 0) // grid exists
 	{
 		m_albedoGrid = Context().CreateVolumeGrid(
 			vdata.albedoGrid.gridSizeX,
@@ -468,7 +468,7 @@ bool NorthstarRPRVolume::TranslateVolume()
 		volumeShader.xSetValue(RPR_MATERIAL_INPUT_COLOR, albedoLookupNode);
 	}
 
-	if (vdata.emissionGrid.IsValid()) // grid exists
+	if (vdata.emissionGrid.IsValid() && vdata.emissionGrid.gridOnIndices.size() > 0) // grid exists
 	{	
 		m_emissionGrid = Context().CreateVolumeGrid(
 			vdata.emissionGrid.gridSizeX,
