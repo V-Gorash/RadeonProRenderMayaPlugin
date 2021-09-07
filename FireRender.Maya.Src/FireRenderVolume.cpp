@@ -1711,12 +1711,17 @@ bool NorthstarFluidVolume::TranslateVolume(void)
 
 	for (size_t idx = 0; idx < vdata.densityVal.size(); idx++) 
 	{
-		if (vdata.densityVal[idx] > 1 || vdata.densityVal[idx] < 0)
+		if (vdata.densityVal[idx] < 0)
 		{
-			densityValues[idx] = 0; // skip incorrect index value
+			densityValues[idx] = 0;  // process incorrect lookup index
 			continue;
 		}
-		size_t lookupIdx = floor(vdata.densityVal[idx] * vdata.denstiyLookupCtrlPoints.size());
+		if (vdata.densityVal[idx] >= 1)
+		{
+			densityValues[idx] = vdata.denstiyLookupCtrlPoints.back(); // process incorrect lookup index
+			continue;
+		}
+		size_t lookupIdx = floor(vdata.densityVal[idx] * (vdata.denstiyLookupCtrlPoints.size() - 1));
 
 		// linear interpolation
 		float firstValue = vdata.denstiyLookupCtrlPoints[lookupIdx];
