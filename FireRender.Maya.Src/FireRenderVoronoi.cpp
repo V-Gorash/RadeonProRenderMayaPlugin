@@ -46,8 +46,8 @@ MStatus FireMaya::Voronoi::initialize()
 
 	Attribute::randomness = nAttr.create("randomness", "r", MFnNumericData::kFloat, 1);
 	MAKE_INPUT(nAttr);
-	nAttr.setSoftMax(1.0);
-	nAttr.setSoftMin(0.0);
+	nAttr.setMax(1.0);
+	nAttr.setMin(0.0);
 
 	Attribute::output = nAttr.createColor("out", "o");
 	MAKE_OUTPUT(nAttr);
