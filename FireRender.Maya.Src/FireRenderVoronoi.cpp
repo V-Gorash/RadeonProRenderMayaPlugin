@@ -24,6 +24,7 @@ namespace
 		MObject dimension;
 		MObject	output;
 		MObject mapChannel;
+		MObject outType;
 	}
 }
 
@@ -62,18 +63,26 @@ MStatus FireMaya::Voronoi::initialize()
 	eAttr.addField("3D", 3);
 	MAKE_INPUT_CONST(eAttr);
 
+	Attribute::outType = eAttr.create("outType", "ot", RPR_VORONOI_OUT_TYPE_COLOR);
+	eAttr.addField("Color", RPR_VORONOI_OUT_TYPE_COLOR);
+	eAttr.addField("Distance", RPR_VORONOI_OUT_TYPE_DISTANCE);
+	eAttr.addField("Position", RPR_VORONOI_OUT_TYPE_POSITION);
+	MAKE_INPUT_CONST(eAttr);
+
 	CHECK_MSTATUS(addAttribute(Attribute::uv));
 	CHECK_MSTATUS(addAttribute(Attribute::scale));
 	CHECK_MSTATUS(addAttribute(Attribute::randomness));
 	CHECK_MSTATUS(addAttribute(Attribute::output));
 	CHECK_MSTATUS(addAttribute(Attribute::mapChannel));
 	CHECK_MSTATUS(addAttribute(Attribute::dimension));
+	CHECK_MSTATUS(addAttribute(Attribute::outType));
 
 	CHECK_MSTATUS(attributeAffects(Attribute::uv, Attribute::output));
 	CHECK_MSTATUS(attributeAffects(Attribute::scale, Attribute::output));
 	CHECK_MSTATUS(attributeAffects(Attribute::randomness, Attribute::output));
 	CHECK_MSTATUS(attributeAffects(Attribute::mapChannel, Attribute::output));
 	CHECK_MSTATUS(attributeAffects(Attribute::dimension, Attribute::output));
+	CHECK_MSTATUS(attributeAffects(Attribute::outType, Attribute::output));
 
 	return MS::kSuccess;
 }
@@ -107,6 +116,9 @@ frw::Value FireMaya::Voronoi::GetValue(const Scope& scope) const
 
 	auto dimension = scope.GetValue(shaderNode.findPlug(Attribute::dimension, false));
 	valueNode.SetValue(RPR_MATERIAL_INPUT_DIMENSION, dimension);
+
+	auto outType = scope.GetValue(shaderNode.findPlug(Attribute::outType, false));
+	valueNode.SetValueInt(RPR_MATERIAL_INPUT_OUTTYPE, outType.GetInt());
 
 	return valueNode;
 }
