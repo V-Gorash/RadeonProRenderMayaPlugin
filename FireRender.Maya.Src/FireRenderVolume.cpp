@@ -442,7 +442,7 @@ bool NorthstarRPRVolume::TranslateVolume()
 		);
 
 		MFnDependencyNode depNode(node);
-		float maxDensityValue = RPRVolumeAttributes::GetDensityMultiplier(depNode) * 1.1f;
+		float const maxDensityValue = RPRVolumeAttributes::GetDensityMultiplier(depNode);
 
 		auto densityGridNode = frw::GridNode(context()->GetMaterialSystem());
 		densityGridNode.SetGrid(m_densityGrid);
