@@ -43,7 +43,6 @@ MStatus FireMaya::Voronoi::initialize()
 
 	Attribute::scale = nAttr.create("scale", "s", MFnNumericData::kFloat, 1);
 	MAKE_INPUT(nAttr);
-	nAttr.setMin(1.0);
 
 	Attribute::randomness = nAttr.create("randomness", "r", MFnNumericData::kFloat, 1);
 	MAKE_INPUT(nAttr);

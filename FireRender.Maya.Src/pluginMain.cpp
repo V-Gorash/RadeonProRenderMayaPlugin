@@ -873,7 +873,7 @@ MStatus initializePlugin(MObject obj)
 	CHECK_MSTATUS(plugin.registerNode(namePrefix + "Voronoi", FireMaya::Voronoi::FRTypeID(),
 		FireMaya::Voronoi::creator,
 		FireMaya::Voronoi::initialize,
-		MPxNode::kDependNode, &UserUtilityClassify));
+		MPxNode::kDependNode, &UserTextureClassify));
 
 	CHECK_MSTATUS(plugin.registerNode(namePrefix + "BlendValue", FireMaya::BlendValue::FRTypeID(),
 		FireMaya::BlendValue::creator,
