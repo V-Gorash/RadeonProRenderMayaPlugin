@@ -305,7 +305,7 @@ bool ProcessSchema(int schemaId, int frame, std::string& filePath)
 		{ 1, {std::regex(R"(^(?:[\w]\:)(\/[a-zA-Z_\-\s0-9\.]+)+(\.)(vdb)\.([0-9])+$)"), std::regex(R"((\.)(vdb)\.([0-9])+$)"),	"name.ext.#"	}},
 		{ 2, {std::regex(R"(^(?:[\w]\:)(\/[a-zA-Z_\-\s0-9\.]+)+\.([0-9])+$)"),			std::regex(R"(\.([0-9])+$)"),			"name.#"		}},
 		{ 3, {std::regex(R"(^(?:[\w]\:)(\/[a-zA-Z_\-\s0-9\.]+)+([0-9])+\.(vdb)$)"),		std::regex(R"(([0-9])+\.(vdb)$)"),		"name#.ext"		}},
-		{ 4, {std::regex(R"(^(?:[\w]\:)(\/[a-zA-Z_\-\s0-9\.]+)+(\_)([0-9])+\.(vdb)$)"), std::regex(R"((\_)([0-9])+\.(vdb)$)"),	"name_#.ext"	}}
+		{ 4, {std::regex(R"(^(?:[\w]\:)(\/[a-zA-Z_\-\s0-9\.]+)+_([0-9])+\.(vdb)$)"), std::regex(R"(_([0-9])+\.(vdb)$)"),		"name_#.ext"	}}
 	};
 #else // macOS
 	const static std::map<int, std::tuple<std::regex, std::regex, std::string>> mayaNamePattern =
