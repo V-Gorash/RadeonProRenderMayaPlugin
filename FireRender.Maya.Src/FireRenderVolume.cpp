@@ -276,6 +276,12 @@ bool FireRenderRPRVolume::TranslateVolume()
 			vdata.densityGrid.gridOnValueIndices,
 			RPR_GRID_INDICES_TOPOLOGY_XYZ_U32
 		);
+
+		// scale
+		m_bboxScale.setToIdentity();
+		m_bboxScale[0][0] = vdata.densityGrid.size.gridSizeX * vdata.densityGrid.size.voxelSizeX;
+		m_bboxScale[1][1] = vdata.densityGrid.size.gridSizeY * vdata.densityGrid.size.voxelSizeY;
+		m_bboxScale[2][2] = vdata.densityGrid.size.gridSizeZ * vdata.densityGrid.size.voxelSizeZ;
 	}
 
 	if (vdata.albedoGrid.IsValid()) // grid exists
@@ -451,11 +457,9 @@ bool NorthstarRPRVolume::TranslateVolume()
 
 		// scale
 		m_bboxScale.setToIdentity();
-		float max_size = std::max<float>(vdata.densityGrid.size.gridSizeX,
-			std::max<float>(vdata.densityGrid.size.gridSizeY, vdata.densityGrid.size.gridSizeZ));
-		m_bboxScale[0][0] = vdata.densityGrid.size.gridSizeX / max_size;
-		m_bboxScale[1][1] = vdata.densityGrid.size.gridSizeY / max_size;
-		m_bboxScale[2][2] = vdata.densityGrid.size.gridSizeZ / max_size;
+		m_bboxScale[0][0] = vdata.densityGrid.size.gridSizeX * vdata.densityGrid.size.voxelSizeX;
+		m_bboxScale[1][1] = vdata.densityGrid.size.gridSizeY * vdata.densityGrid.size.voxelSizeY;
+		m_bboxScale[2][2] = vdata.densityGrid.size.gridSizeZ * vdata.densityGrid.size.voxelSizeZ;
 
 	}
 	
