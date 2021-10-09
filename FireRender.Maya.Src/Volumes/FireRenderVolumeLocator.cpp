@@ -20,6 +20,7 @@ limitations under the License.
 #include "FireRenderVolumeLocator.h"
 #include "VolumeAttributes.h"
 #include "FireMaya.h"
+#include <RadeonProRenderLibs/rprLibs/pluginUtils.h>
 
 MTypeId FireRenderVolumeLocator::id(FireMaya::TypeId::FireRenderVolumeLocator);
 MString FireRenderVolumeLocator::drawDbClassification("drawdb/geometry/FireRenderVolumeLocator");

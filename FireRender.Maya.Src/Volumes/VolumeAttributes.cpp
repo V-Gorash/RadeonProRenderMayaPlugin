@@ -576,7 +576,7 @@ MString RPRVolumeAttributes::GetSelectedEmissionGridName(const MFnDependencyNode
 	return MString(value);
 }
 
-void SetVolumeUIDimensions(std::array<int, 3 >& dimValues, MPlug& plugToSet)
+void SetVolumeUIDimensions(VDBGridSize& dimValues, MPlug& plugToSet)
 {
 	assert(!plugToSet.isNull());
 	if (plugToSet.isNull())
@@ -649,7 +649,7 @@ void ProcessTemperatureGrid(
 	}
 }
 
-void RPRVolumeAttributes::SetupVolumeFromFile(MObject& node, FireRenderVolumeLocator::GridParams& gridParams)
+void RPRVolumeAttributes::SetupVolumeFromFile(MObject& node, VDBGridParams& gridParams)
 {
 	// get .vdb file from UI form
 	std::string filename = GetVDBFilePath(node);
@@ -700,7 +700,7 @@ void RPRVolumeAttributes::SetupVolumeFromFile(MObject& node, FireRenderVolumeLoc
 	CHECK_MSTATUS(res);
 }
 
-void RPRVolumeAttributes::SetupGridSizeFromFile(MObject& node, MPlug& plug, FireRenderVolumeLocator::GridParams& gridParams)
+void RPRVolumeAttributes::SetupGridSizeFromFile(MObject& node, MPlug& plug, VDBGridParams& gridParams)
 {
 	MFnDependencyNode depNode(node);
 

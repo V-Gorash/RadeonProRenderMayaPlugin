@@ -213,8 +213,8 @@ public:
 
 	static void FillVolumeData(VolumeData& data, const MObject& node, FireMaya::Scope* scope);
 
-	static void SetupVolumeFromFile(MObject& node, FireRenderVolumeLocator::GridParams& gridParams);
-	static void SetupGridSizeFromFile(MObject& node, MPlug& plug, FireRenderVolumeLocator::GridParams& gridParams);
+	static void SetupVolumeFromFile(MObject& node, VDBGridParams& gridParams);
+	static void SetupGridSizeFromFile(MObject& node, MPlug& plug, VDBGridParams& gridParams);
 
 	static void FillVolumeData(VDBVolumeData& data, const MObject& node);
 
