@@ -754,6 +754,11 @@ void RPRVolumeAttributes::SetupVolumeFromFile(MObject& node, VDBGridParams& grid
 	MString command = "FillGridList(\"" + partialPathName + "\");\n";
 	MStatus res = MGlobal::executeCommandOnIdle(command);
 	CHECK_MSTATUS(res);
+
+	// setup new grid parameters
+	MFnDependencyNode depNode(node);
+	MPlug densityPlug = depNode.findPlug(RPRVolumeAttributes::densitySelectedGrid);
+	SetupGridSizeFromFile(node, densityPlug, gridParams);
 }
 
 void RPRVolumeAttributes::SetupGridSizeFromFile(MObject& node, MPlug& plug, VDBGridParams& gridParams)
