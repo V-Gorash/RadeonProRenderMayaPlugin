@@ -61,6 +61,8 @@ void FireRenderVolumeLocator::postConstructor()
 	MStatus status;
 	MObject mobj = thisMObject();
 	m_attributeChangedCallback = MNodeMessage::addAttributeChangedCallback(mobj, FireRenderVolumeLocator::onAttributeChanged, this, &status);
+	m_timeChangedCallback = MEventMessage::addEventCallback("timeChanged", FireRenderVolumeLocator::onTimeChanged, this, &status);
+	assert(status == MStatus::kSuccess);
 	assert(status == MStatus::kSuccess);
 
 	setMPSafe(true);
@@ -199,5 +201,13 @@ void FireRenderVolumeLocator::onAttributeChanged(MNodeMessage::AttributeMessage 
 	{
 		RPRVolumeAttributes::SetupGridSizeFromFile(mobj, plug, rprVolumeLocatorNode->m_gridParams);
 	}
+}
+
+void FireRenderVolumeLocator::onTimeChanged(void* clientData)
+{
+	FireRenderVolumeLocator* rprVolumeLocatorNode = static_cast<FireRenderVolumeLocator*> (clientData);
+	MObject mobj = rprVolumeLocatorNode->thisMObject();
+
+	RPRVolumeAttributes::SetupVolumeFromFile(mobj, rprVolumeLocatorNode->m_gridParams);
 }
 
