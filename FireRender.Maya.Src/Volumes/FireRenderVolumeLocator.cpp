@@ -208,6 +208,9 @@ void FireRenderVolumeLocator::onTimeChanged(void* clientData)
 	FireRenderVolumeLocator* rprVolumeLocatorNode = static_cast<FireRenderVolumeLocator*> (clientData);
 	MObject mobj = rprVolumeLocatorNode->thisMObject();
 
+	MFnDependencyNode depNode(mobj);
+	MGlobal::executeCommand(MString("dgdirty " + depNode.name()));
+
 	RPRVolumeAttributes::SetupVolumeFromFile(mobj, rprVolumeLocatorNode->m_gridParams);
 }
 
