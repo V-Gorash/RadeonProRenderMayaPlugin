@@ -61,8 +61,8 @@ void FireRenderVolumeLocator::postConstructor()
 	MStatus status;
 	MObject mobj = thisMObject();
 	m_attributeChangedCallback = MNodeMessage::addAttributeChangedCallback(mobj, FireRenderVolumeLocator::onAttributeChanged, this, &status);
-	m_timeChangedCallback = MEventMessage::addEventCallback("timeChanged", FireRenderVolumeLocator::onTimeChanged, this, &status);
 	assert(status == MStatus::kSuccess);
+	m_timeChangedCallback = MEventMessage::addEventCallback("timeChanged", FireRenderVolumeLocator::onTimeChanged, this, &status);
 	assert(status == MStatus::kSuccess);
 
 	setMPSafe(true);
