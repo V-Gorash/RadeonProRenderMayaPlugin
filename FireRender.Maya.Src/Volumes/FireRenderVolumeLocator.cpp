@@ -36,6 +36,10 @@ FireRenderVolumeLocator::~FireRenderVolumeLocator()
 	{
 		MNodeMessage::removeCallback(m_attributeChangedCallback);
 	}
+	if (m_timeChangedCallback != 0)
+	{
+		MEventMessage::removeCallback(m_timeChangedCallback);
+	}
 }
 
 void SetDefaultStringArrayAttrValue(MPlug& plug, MDataBlock& block)
@@ -205,6 +209,9 @@ void FireRenderVolumeLocator::onAttributeChanged(MNodeMessage::AttributeMessage 
 
 void FireRenderVolumeLocator::onTimeChanged(void* clientData)
 {
+	if (!clientData) {
+		return;
+	}
 	FireRenderVolumeLocator* rprVolumeLocatorNode = static_cast<FireRenderVolumeLocator*> (clientData);
 	MObject mobj = rprVolumeLocatorNode->thisMObject();
 
