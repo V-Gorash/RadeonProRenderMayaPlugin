@@ -209,7 +209,8 @@ void FireRenderVolumeLocator::onAttributeChanged(MNodeMessage::AttributeMessage 
 
 void FireRenderVolumeLocator::onTimeChanged(void* clientData)
 {
-	if (!clientData) {
+	if (clientData == nullptr)
+	{
 		return;
 	}
 	FireRenderVolumeLocator* rprVolumeLocatorNode = static_cast<FireRenderVolumeLocator*> (clientData);
