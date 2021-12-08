@@ -67,10 +67,10 @@ MStatus FireMaya::VolumeMaterial::initialize()
 	MAKE_INPUT(nAttr);
 	CHECK_MSTATUS(nAttr.setDefault(.0f, .0f, .0f));
 
-	Attribute::density = nAttr.create("density", "d", MFnNumericData::kFloat, 1.);
+ 	Attribute::density = nAttr.create("density", "d", MFnNumericData::kFloat, 100.);
 	MAKE_INPUT(nAttr);
 	nAttr.setSoftMin(0.0);
-	nAttr.setSoftMax(10.f);
+	nAttr.setSoftMax(1000.f);
 
 	Attribute::scatteringDirection = nAttr.create("scatteringDirection", "sd", MFnNumericData::kFloat, 0.0);
 	MAKE_INPUT(nAttr);
@@ -140,22 +140,25 @@ frw::Shader FireMaya::VolumeMaterial::GetVolumeShader(Scope& scope)
 	auto scatterColor = scope.GetValue(shaderNode.findPlug(Attribute::scatterColor, false));
 	auto transmissionColor = scope.GetValue(shaderNode.findPlug(Attribute::transmissionColor, false));
 	auto emissionColor = scope.GetValue(shaderNode.findPlug(Attribute::emissionColor, false));
-	auto k = shaderNode.findPlug(Attribute::density, false).asFloat();
+	auto density = shaderNode.findPlug(Attribute::density, false).asFloat();
 	auto scatteringDirection = shaderNode.findPlug(Attribute::scatteringDirection, false).asFloat();
 	auto multiScatter = shaderNode.findPlug(Attribute::multiScattering, false).asBool();
 
+	//density
+	material.SetValue(RPR_MATERIAL_INPUT_DENSITY, density);
+
 	// scattering
-	material.SetValue(RPR_MATERIAL_INPUT_SCATTERING, scatterColor * k);
+	material.SetValue(RPR_MATERIAL_INPUT_COLOR, scatterColor);
 
 	// absorption
-	material.SetValue(RPR_MATERIAL_INPUT_ABSORBTION, (1 - transmissionColor) * k);
+	//material.SetValue(RPR_MATERIAL_INPUT_ABSORBTION, (1 - transmissionColor) * density);
 
 	// emission
-	material.SetValue(RPR_MATERIAL_INPUT_EMISSION, emissionColor * k);
+	material.SetValue(RPR_MATERIAL_INPUT_EMISSION, emissionColor);
 
 	// phase and multi on/off
 	material.SetValue(RPR_MATERIAL_INPUT_G, scatteringDirection);
-	material.SetValue(RPR_MATERIAL_INPUT_MULTISCATTER, multiScatter ? 1.f : 0.f);
+	//material.SetValue(RPR_MATERIAL_INPUT_MULTISCATTER, multiScatter ? 1.f : 0.f);
 
 	return material;
 }
