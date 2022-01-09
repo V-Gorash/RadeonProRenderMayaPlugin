@@ -266,10 +266,7 @@ void FireRenderIESLightLocatorOverride::updateRenderItems(const MDagPath& path, 
 	{
 		float areaWidth = GetAreaWidth();
 
-		MEulerRotation rotation(
-			FireMaya::deg2rad(0.f),
-			FireMaya::deg2rad(0.f),
-			FireMaya::deg2rad(0.f));
+		MEulerRotation rotation(M_PI / 2, 0, 0);
 		MMatrix matrix = rotation.asMatrix();
 
 		MTransformationMatrix trm;

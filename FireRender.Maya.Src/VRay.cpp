@@ -382,9 +382,7 @@ namespace FireMaya
 				status = dagNode.getPath(dagPath);
 				assert(status == MStatus::kSuccess);
 
-				MEulerRotation rotation(- M_PI / 2,	0, 0);
-				ret.matrix = rotation.asMatrix();
-				ret.matrix *= dagPath.inclusiveMatrix(&status);
+				ret.matrix = dagPath.inclusiveMatrix(&status);
 			}
 
 			ret.filePath = findPlugTryGetValue(depNodeVRayLight, "iesFile", ""_ms);
