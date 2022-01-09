@@ -382,15 +382,7 @@ namespace FireMaya
 				status = dagNode.getPath(dagPath);
 				assert(status == MStatus::kSuccess);
 
-				auto getRotation = [&](const char* name)
-				{
-					return FireMaya::deg2rad(findPlugTryGetValue(depNodeVRayLight, name, 0.0f));
-				};
-
-				MEulerRotation rotation(
-					getRotation("xRotation") - M_PI / 2,
-					getRotation("yRotation"),
-					getRotation("zRotation"));
+				MEulerRotation rotation(- M_PI / 2,	0, 0);
 				ret.matrix = rotation.asMatrix();
 				ret.matrix *= dagPath.inclusiveMatrix(&status);
 			}
