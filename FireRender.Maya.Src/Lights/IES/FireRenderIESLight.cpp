@@ -254,11 +254,6 @@ void FireRenderIESLightLocatorOverride::updateRenderItems(const MDagPath& path, 
 		MEulerRotation rotation(M_PI / 2, 0, 0);
 		MMatrix matrix = rotation.asMatrix();
 
-		MTransformationMatrix trm;
-		double scale[3]{ 1, 1, 1 };
-		trm.setScale(scale, MSpace::Space::kObject);
-
-		matrix *= trm.asMatrix();
 		bool ok = mesh->setMatrix(&matrix);
 		assert(ok);
 
