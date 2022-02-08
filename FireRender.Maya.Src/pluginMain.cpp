@@ -527,6 +527,13 @@ void AddExtensionAttributesCommon()
 	MObject emitterAttr = nAttr.create("RPRIsEmitter", "iem", MFnNumericData::kBoolean, false);
 	nAttr.setNiceNameOverride("RPR Is Emitter");
 	locatorClass.addExtensionAttribute(emitterAttr);
+
+
+	// Add shadow color attribute to shapes
+	MNodeClass shapeClass("shape");
+
+	MObject shadowColorAttr = nAttr.createColor("RPRShadowColor", "shc");
+	shapeClass.addExtensionAttribute(shadowColorAttr);
 }
 
 void AddExtensionAttributesForMaterials()
