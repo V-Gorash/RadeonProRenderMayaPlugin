@@ -529,11 +529,14 @@ void AddExtensionAttributesCommon()
 	locatorClass.addExtensionAttribute(emitterAttr);
 
 
-	// Add shadow color attribute to shapes
-	MNodeClass shapeClass("shape");
+	// Add shadow color attribute to geometry objects
+	MNodeClass nurbsClass("nurbsSurface");
+	MNodeClass meshClass("mesh");
 
-	MObject shadowColorAttr = nAttr.createColor("RPRShadowColor", "shc");
-	shapeClass.addExtensionAttribute(shadowColorAttr);
+	const MObject nurbsShadowColorAttr = nAttr.createColor("RPRShadowColor", "shc");
+	const MObject meshShadowColorAttr = nAttr.createColor("RPRShadowColor", "shc");
+	nurbsClass.addExtensionAttribute(nurbsShadowColorAttr);
+	meshClass.addExtensionAttribute(meshShadowColorAttr);
 }
 
 void AddExtensionAttributesForMaterials()
