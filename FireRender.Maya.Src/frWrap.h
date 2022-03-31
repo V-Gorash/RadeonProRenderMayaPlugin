@@ -1083,31 +1083,32 @@ namespace frw
 
 		void SetVertexColors(const std::vector<int>& vertexIndices, const std::vector<MColor>& vertexColors, rpr_int indexCount)
 		{
+			const int numComponents = 4;
 			std::vector<rpr_float> colors;
-			colors.resize(indexCount * 4);
+			colors.resize(indexCount * numComponents);
 
-			for (int colorComponent = 0; colorComponent < 4; colorComponent++)
+			for (int colorComponent = 0; colorComponent < numComponents; colorComponent++)
 			{
 				for (int vertexIndex : vertexIndices)
 				{
 					switch (colorComponent)
 					{
 					case 0:
-						colors[vertexIndex * 4] = vertexColors[vertexIndex].r;
+						colors[vertexIndex * numComponents] = vertexColors[vertexIndex].r;
 						break;
 					case 1:
-						colors[vertexIndex * 4 + 1] = vertexColors[vertexIndex].g;
+						colors[vertexIndex * numComponents + 1] = vertexColors[vertexIndex].g;
 						break;
 					case 2:
-						colors[vertexIndex * 4 + 2] = vertexColors[vertexIndex].b;
+						colors[vertexIndex * numComponents + 2] = vertexColors[vertexIndex].b;
 						break;
 					case 3:
-						colors[vertexIndex * 4 + 3] = vertexColors[vertexIndex].a;
+						colors[vertexIndex * numComponents + 3] = vertexColors[vertexIndex].a;
 						break;
 					}
 				}
 			}
-			rprShapeSetPrimvar(Handle(), 0, colors.data(), colors.size(), 4, RPR_PRIMVAR_INTERPOLATION_VERTEX); // we use primvar channel with number zero to store vertex colors
+			rprShapeSetPrimvar(Handle(), 0, colors.data(), colors.size(), numComponents, RPR_PRIMVAR_INTERPOLATION_VERTEX); // we use primvar channel with number zero to store vertex colors
 		}
 
 #ifdef FRW_USE_MAX_TYPES
