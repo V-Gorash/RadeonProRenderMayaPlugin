@@ -1722,10 +1722,7 @@ frw::Shader FireMaya::Scope::ParseShader(MObject node)
 				mayaSpreadY = 98.0;
 			}
 
-			frw::Value roughnessX = materialSystem.ValueMul(roughness, 1.0 - mayaSpreadX / 100.0);
-			frw::Value roughnessY = materialSystem.ValueMul(roughness, 1.0 - mayaSpreadY / 100.0);
-			
-			frw::Value anisotropic = materialSystem.ValueSub(mayaSpreadY, mayaSpreadX);
+			frw::Value anisotropic = materialSystem.ValueSub(mayaSpreadX, mayaSpreadY);
 			anisotropic = materialSystem.ValueDiv(anisotropic, frw::Value(100.0));
 			specularShader.SetValue(RPR_MATERIAL_INPUT_ANISOTROPIC, anisotropic);
 
