@@ -19,6 +19,7 @@ limitations under the License.
 #include <maya/MTypeId.h>
 #include <maya/MPxNode.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MNodeMessage.h>
 #include "Context/FireRenderContextIFace.h"

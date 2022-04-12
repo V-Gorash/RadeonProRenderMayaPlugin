@@ -36,6 +36,10 @@ namespace
 		MObject rampRange1;
 		MObject rampRange2;
 		MObject rampRangeHighlight;
+
+		// light linking
+		MObject enableLightLinking;
+		MObject linkedLight;
 	}
 }
 
@@ -48,6 +52,7 @@ namespace
 MStatus FireMaya::ToonMaterial::initialize()
 {
 	MFnNumericAttribute nAttr;
+	MFnEnumAttribute eAttr;
 
 	Attribute::output = nAttr.createColor("outColor", "oc");
 	MAKE_OUTPUT(nAttr);
@@ -156,6 +161,17 @@ MStatus FireMaya::ToonMaterial::initialize()
 	nAttr.setMin(0.0);
 	nAttr.setMax(1.0);
 
+	// light linking
+	Attribute::enableLightLinking = nAttr.create("enableLightLinking", "ell", MFnNumericData::kBoolean, 0);
+	MAKE_INPUT(nAttr);
+	nAttr.setConnectable(false);
+
+	Attribute::linkedLight = eAttr.create("linkedLight", "ll", 0);
+	eAttr.addField("light 0", 0);
+	eAttr.addField("light 1", 1);
+	eAttr.addField("light 2", 2);
+	MAKE_INPUT_CONST(eAttr);
+
 
 	// Adding all attributes to the node type
 	addAttribute(Attribute::output);
@@ -186,6 +202,9 @@ MStatus FireMaya::ToonMaterial::initialize()
 	ADD_ATTRIBUTE(Attribute::rampRange1);
 	ADD_ATTRIBUTE(Attribute::rampRange2);
 	ADD_ATTRIBUTE(Attribute::rampRangeHighlight);
+
+	ADD_ATTRIBUTE(Attribute::enableLightLinking);
+	ADD_ATTRIBUTE(Attribute::linkedLight);
 
 	return MStatus::kSuccess;
 }

@@ -24,6 +24,9 @@ global proc AERPRToonMaterialTemplate( string $nodeName )
 
 		editorTemplate -l "Transparency Enable" -addControl "transparencyEnable" "TransparencyEnableChanged";
 		editorTemplate -l "Transparency Level" -addControl "transparencyLevel";
+		
+		editorTemplate -l "Light Linking Enable" -addControl "enableLightLinking" "LightLinkingEnableChanged";
+		editorTemplate -l "Linked Light" -addControl "linkedLight";
 
 		editorTemplate -beginLayout "Advanced" -collapse 0;
 			editorTemplate -l "Enable 5 Colors" -addControl "enable5Colors" "UpdateRampFieldsEnable";
@@ -45,6 +48,7 @@ global proc AERPRToonMaterialTemplate( string $nodeName )
 			editorTemplate -l "Mid Level Mix" -addControl "rampRange1";
 			editorTemplate -l "Highlight Level Mix" -addControl "rampRange2";
 			editorTemplate -l "Highlight Level Mix 2" -addControl "rampRangeHighlight";
+			
 		editorTemplate -endLayout;
 	editorTemplate -endLayout;
 
@@ -105,3 +109,13 @@ global proc TransparencyEnableChanged(string $nodeName)
 
 	editorTemplate -dimControl $nodeName transparencyLevel $dim;
 }
+
+global proc LightLinkingEnableChanged(string $nodeName)
+{
+	string $nodeAttr1 = $nodeName + ".enableLightLinking";
+	
+	$dim = !`getAttr $nodeAttr1`;
+	
+	editorTemplate -dimControl $nodeName linkedLight $dim;
+}
+
