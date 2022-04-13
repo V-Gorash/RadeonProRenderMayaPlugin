@@ -182,7 +182,6 @@ namespace frw
 		ShaderTypeMicrofacetRefraction = RPR_MATERIAL_NODE_MICROFACET_REFRACTION,
 		ShaderTypeTransparent = RPR_MATERIAL_NODE_TRANSPARENT,
 		ShaderTypeEmissive = RPR_MATERIAL_NODE_EMISSIVE,
-		ShaderTypeWard = RPR_MATERIAL_NODE_WARD,
 		ShaderTypeBlend = RPR_MATERIAL_NODE_BLEND,
 		ShaderTypeStandard = RPR_MATERIAL_NODE_UBERV2,
 		ShaderTypeOrenNayer = RPR_MATERIAL_NODE_ORENNAYAR,
@@ -190,7 +189,8 @@ namespace frw
 		ShaderTypeAdd = RPR_MATERIAL_NODE_ADD,
 		ShaderTypeVolume = RPR_MATERIAL_NODE_VOLUME,
 		ShaderTypeFlatColor = RPR_MATERIAL_NODE_PASSTHROUGH,
-		ShaderTypeToon = RPR_MATERIAL_NODE_TOON_CLOSURE
+		ShaderTypeToon = RPR_MATERIAL_NODE_TOON_CLOSURE,
+		ShaderTypeMicrofacetAnisotropicReflection = RPR_MATERIAL_NODE_MICROFACET_ANISOTROPIC_REFLECTION
 	};
 
 	enum ContextParameterType
@@ -1140,6 +1140,20 @@ namespace frw
 			}
 		}
 
+		void SetReceiveShadowFlag(bool receivesShadows)
+		{
+			auto res = rprShapeSetVisibilityFlag(Handle(), RPR_SHAPE_VISIBILITY_RECEIVE_SHADOW, receivesShadows);
+
+			if (res == RPR_ERROR_UNSUPPORTED)
+			{
+				return;
+			}
+			else
+			{
+				checkStatus(res);
+			}
+		}
+
 		void SetContourVisibilityFlag(bool isContourVisible)
 		{
 			auto res = rprShapeSetContourIgnore(Handle(), !isContourVisible);
@@ -1493,6 +1507,20 @@ namespace frw
 		void SetShadowFlag(bool castsShadows)
 		{
 			auto res = rprCurveSetVisibilityFlag(Handle(), RPR_CURVE_VISIBILITY_SHADOW, castsShadows);
+
+			if (res == RPR_ERROR_UNSUPPORTED)
+			{
+				return;
+			}
+			else
+			{
+				checkStatus(res);
+			}
+		}
+
+		void SetReceiveShadowFlag(bool receivesShadows)
+		{
+			auto res = rprCurveSetVisibilityFlag(Handle(), RPR_CURVE_VISIBILITY_RECEIVE_SHADOW, receivesShadows);
 
 			if (res == RPR_ERROR_UNSUPPORTED)
 			{
