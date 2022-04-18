@@ -166,11 +166,8 @@ MStatus FireMaya::ToonMaterial::initialize()
 	MAKE_INPUT(nAttr);
 	nAttr.setConnectable(false);
 
-	Attribute::linkedLight = eAttr.create("linkedLight", "ll", 0);
-	eAttr.addField("light 0", 0);
-	eAttr.addField("light 1", 1);
-	eAttr.addField("light 2", 2);
-	MAKE_INPUT_CONST(eAttr);
+	//Attribute::linkedLight = eAttr.create("linkedLight", "ll", 0);
+	//MAKE_INPUT_CONST(eAttr);
 
 
 	// Adding all attributes to the node type
@@ -204,7 +201,7 @@ MStatus FireMaya::ToonMaterial::initialize()
 	ADD_ATTRIBUTE(Attribute::rampRangeHighlight);
 
 	ADD_ATTRIBUTE(Attribute::enableLightLinking);
-	ADD_ATTRIBUTE(Attribute::linkedLight);
+	//ADD_ATTRIBUTE(Attribute::linkedLight);
 
 	return MStatus::kSuccess;
 }

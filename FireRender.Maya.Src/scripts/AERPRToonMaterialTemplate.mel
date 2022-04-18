@@ -112,10 +112,46 @@ global proc TransparencyEnableChanged(string $nodeName)
 
 global proc LightLinkingEnableChanged(string $nodeName)
 {
-	string $nodeAttr1 = $nodeName + ".enableLightLinking";
+	string $checkboxName = $nodeName + ".enableLightLinking";
 	
-	$dim = !`getAttr $nodeAttr1`;
+	$dim = !`getAttr $checkboxName`;
 	
 	editorTemplate -dimControl $nodeName linkedLight $dim;
+	
+	RefreshLinkedLightAttribute $nodeName;
+}
+
+global proc RefreshLinkedLightAttribute(string $nodeName)
+{
+	string $enumName = $nodeName + ".linkedLight";
+	
+	if (!`attributeExists "linkedLight" $nodeName`)
+	{
+		addAttr -at enum -en "none" -ln linkedLight -r false -w true -k false -s true;
+		refreshEditorTemplates;
+	}
+	
+	string $lightTypes[] = {"light", "RPRPhysicalLight"};
+	string $lightNames = "";
+	
+	for($lightType in $lightTypes)
+	{
+		string $lights[] = `ls -type $lightType`;
+		for($light in $lights)
+		{
+			$lightNames = $lightNames + $light + ":";
+		}
+	}
+	if (`size $lightNames` > 0)
+	{
+		// remove last ':' character
+		$lightNames = `substring $lightNames 1 (size($lightNames) - 1)`;
+	}
+	else
+	{
+		$lightNames = "none";
+	}
+	addAttr -edit -enumName $lightNames $enumName;
+
 }
 
