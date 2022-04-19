@@ -1,5 +1,8 @@
 #include "FireRenderToonMaterial.h"
 #include "FireMaya.h"
+#include "FireRenderUtils.h"
+#include "maya/MSelectionList.h"
+#include "maya/MUuid.h"
 
 namespace
 {
@@ -292,5 +295,36 @@ frw::Shader FireMaya::ToonMaterial::GetShader(Scope& scope)
 		return scope.MaterialSystem().ShaderBlend(shader, transparentShader, transparancyLevel);
 	}
 
+	if (shaderNode.findPlug(Attribute::enableLightLinking, false).asBool())
+	{
+		linkLight(scope, shader);
+	}
+	
 	return shader;
+}
+
+void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
+{
+	RenderType renderType = scope.GetIContextInfo()->GetRenderType();
+	if (renderType == RenderType::Thumbnail || renderType == RenderType::Undefined)
+	{
+		return; // skip if render mode is swatch
+	}
+
+	MFnDependencyNode shaderNode(thisMObject());
+	
+	// We have to use MEL command to get enum value as string
+	MString lightName = MGlobal::executeCommandStringResult("getAttr -as " + shaderNode.uniqueName() + ".linkedLight");
+	MSelectionList selection;
+	MObject light;
+	selection.add(lightName);
+	selection.getDependNode(0, light);
+
+	if (light.isNull())
+	{
+		return;
+	}
+
+	MString lightUUID = MFnDependencyNode(light).uuid().asString();
+	printf(lightUUID.asUTF8());
 }
