@@ -622,6 +622,7 @@ public:
 
 	typedef std::map<std::string, std::shared_ptr<FireRenderObject> > FireRenderObjectMap;
 	FireRenderObjectMap& GetSceneObjects() { return m_sceneObjects; }
+	void* GetSceneObjectsPointer() override { return &m_sceneObjects; };
 
 	RenderType GetRenderType(void) const;
 	void SetRenderType(RenderType renderType);

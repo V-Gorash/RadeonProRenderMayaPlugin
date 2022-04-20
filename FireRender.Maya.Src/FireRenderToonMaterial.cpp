@@ -1,8 +1,9 @@
 #include "FireRenderToonMaterial.h"
 #include "FireMaya.h"
 #include "FireRenderUtils.h"
-#include "maya/MSelectionList.h"
-#include "maya/MUuid.h"
+#include "context/FireRenderContext.h"
+#include <maya/MSelectionList.h>
+#include <maya/MUuid.h>
 
 namespace
 {
@@ -305,7 +306,7 @@ frw::Shader FireMaya::ToonMaterial::GetShader(Scope& scope)
 
 void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 {
-	RenderType renderType = scope.GetIContextInfo()->GetRenderType();
+	const RenderType renderType = scope.GetIContextInfo()->GetRenderType();
 	if (renderType == RenderType::Thumbnail || renderType == RenderType::Undefined)
 	{
 		return; // skip if render mode is swatch
@@ -322,9 +323,19 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 
 	if (light.isNull())
 	{
+		MGlobal::displayError("Unable to find linked light!\n");
 		return;
 	}
 
 	MString lightUUID = MFnDependencyNode(light).uuid().asString();
-	printf(lightUUID.asUTF8());
+	
+	FireRenderContext::FireRenderObjectMap* sceneObjects = static_cast<FireRenderContext::FireRenderObjectMap *>(scope.GetIContextInfo()->GetSceneObjectsPointer());
+	if (sceneObjects->find(lightUUID.asChar()) == sceneObjects->end())
+	{
+		MGlobal::displayError("Unable to find linked light!\n");
+		return;
+	}
+
+	FireRenderObject lightObject = *sceneObjects->operator[](lightUUID.asChar());
+
 }

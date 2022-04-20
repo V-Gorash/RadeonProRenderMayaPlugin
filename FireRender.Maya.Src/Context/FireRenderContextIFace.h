@@ -45,4 +45,6 @@ public:
 	virtual frw::Shader GetDefaultColorShader(frw::Value color) = 0;
 
 	virtual bool IsGLTFExport() const = 0;
+
+	virtual void* GetSceneObjectsPointer() = 0;
 };
