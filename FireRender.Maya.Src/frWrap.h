@@ -3702,6 +3702,21 @@ namespace frw
 			return false;
 		}
 
+		void xSetParameterLight(rpr_material_node_input parameter, rpr_light light)
+		{
+			const Data& d = data();
+			rpr_int res = rprMaterialNodeSetInputLightDataByKey(Handle(), parameter, light);
+			if (res == RPR_ERROR_UNSUPPORTED ||
+				res == RPR_ERROR_INVALID_PARAMETER)
+			{
+				// print error/warning if needed
+			}
+			else
+			{
+				checkStatus(res);
+			}
+		}
+
 		void SetMaterialId(rpr_uint id)
 		{
 			rpr_int res = rprMaterialNodeSetID(Handle(), id);

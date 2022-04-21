@@ -622,7 +622,6 @@ public:
 
 	typedef std::map<std::string, std::shared_ptr<FireRenderObject> > FireRenderObjectMap;
 	FireRenderObjectMap& GetSceneObjects() { return m_sceneObjects; }
-	void* GetSceneObjectsPointer() override { return &m_sceneObjects; };
 
 	RenderType GetRenderType(void) const;
 	void SetRenderType(RenderType renderType);
@@ -669,6 +668,8 @@ public:
 
 	bool setupUpscalerForViewport(RV_PIXEL* data);
 	bool setupDenoiserForViewport();
+
+	rpr_light GetRprLightFromNode(const MObject& node) override;
 
 protected:
 	static int INCORRECT_PLUGIN_ID;

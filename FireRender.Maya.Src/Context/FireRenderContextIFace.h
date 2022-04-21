@@ -46,5 +46,6 @@ public:
 
 	virtual bool IsGLTFExport() const = 0;
 
-	virtual void* GetSceneObjectsPointer() = 0;
+	// used for toon shader light linking
+	virtual rpr_light GetRprLightFromNode(const MObject& node) = 0;
 };

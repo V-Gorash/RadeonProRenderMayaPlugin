@@ -1,7 +1,6 @@
 #include "FireRenderToonMaterial.h"
 #include "FireMaya.h"
 #include "FireRenderUtils.h"
-#include "context/FireRenderContext.h"
 #include <maya/MSelectionList.h>
 #include <maya/MUuid.h>
 
@@ -327,15 +326,13 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 		return;
 	}
 
-	MString lightUUID = MFnDependencyNode(light).uuid().asString();
-	
-	FireRenderContext::FireRenderObjectMap* sceneObjects = static_cast<FireRenderContext::FireRenderObjectMap *>(scope.GetIContextInfo()->GetSceneObjectsPointer());
-	if (sceneObjects->find(lightUUID.asChar()) == sceneObjects->end())
+	rpr_light rprLight = scope.GetIContextInfo()->GetRprLightFromNode(light);
+
+	if (!rprLight)
 	{
 		MGlobal::displayError("Unable to find linked light!\n");
 		return;
 	}
 
-	FireRenderObject lightObject = *sceneObjects->operator[](lightUUID.asChar());
-
+	shader.xSetParameterLight(RPR_MATERIAL_INPUT_LIGHT, rprLight);
 }
