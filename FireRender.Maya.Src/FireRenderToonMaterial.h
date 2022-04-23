@@ -14,8 +14,16 @@ namespace FireMaya
 		virtual MStatus compute(const MPlug&, MDataBlock&) override;
 		virtual frw::Shader GetShader(Scope& scope) override;
 
+		void postConstructor() override;
+
+		~ToonMaterial();
+
 	private:
 		void linkLight(Scope& scope, frw::Shader& shader);
+		static void onLightAdded(MObject& node, void* clientData);
+
+		MCallbackId nodeAddedCallback;
+		MCallbackId nodeRemovedCallback;
 	};
 }
 

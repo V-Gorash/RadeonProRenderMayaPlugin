@@ -3,6 +3,7 @@
 #include "FireRenderUtils.h"
 #include <maya/MSelectionList.h>
 #include <maya/MUuid.h>
+#include <maya/MDGMessage.h>
 
 namespace
 {
@@ -303,6 +304,14 @@ frw::Shader FireMaya::ToonMaterial::GetShader(Scope& scope)
 	return shader;
 }
 
+void FireMaya::ToonMaterial::postConstructor()
+{
+	ShaderNode::postConstructor();
+
+	nodeAddedCallback = MDGMessage::addNodeAddedCallback(onLightAdded, kDefaultNodeType, this);
+	nodeRemovedCallback = MDGMessage::addNodeRemovedCallback(onLightAdded, kDefaultNodeType, this);
+}
+
 void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 {
 	const RenderType renderType = scope.GetIContextInfo()->GetRenderType();
@@ -320,7 +329,7 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 	selection.add(lightName);
 	selection.getDependNode(0, light);
 
-	if (light.isNull())
+	if (light.isNull()) 
 	{
 		MGlobal::displayError("Unable to find linked light!\n");
 		return;
@@ -335,4 +344,22 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 	}
 
 	shader.xSetParameterLight(RPR_MATERIAL_INPUT_LIGHT, rprLight);
+}
+
+void FireMaya::ToonMaterial::onLightAdded(MObject& node, void* userData)
+{
+	FireMaya::ToonMaterial* thisNode = (FireMaya::ToonMaterial*) userData;
+	MGlobal::executeCommand("refreshEditorTemplates " + thisNode->name());
+}
+
+FireMaya::ToonMaterial::~ToonMaterial()
+{
+	if (nodeAddedCallback != 0)
+	{
+		MNodeMessage::removeCallback(nodeAddedCallback);
+	}
+	if (nodeRemovedCallback != 0)
+	{
+		MNodeMessage::removeCallback(nodeAddedCallback);
+	}
 }

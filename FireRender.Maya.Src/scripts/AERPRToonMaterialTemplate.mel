@@ -13,6 +13,7 @@
 global proc AERPRToonMaterialTemplate( string $nodeName )
 {
 	AEswatchDisplay $nodeName;
+	RefreshLinkedLightAttribute $nodeName;
 	editorTemplate -beginScrollLayout;
 
 	editorTemplate -beginLayout "ToonShader" -collapse 0;
@@ -117,8 +118,6 @@ global proc LightLinkingEnableChanged(string $nodeName)
 	$dim = !`getAttr $checkboxName`;
 	
 	editorTemplate -dimControl $nodeName linkedLight $dim;
-	
-	RefreshLinkedLightAttribute $nodeName;
 }
 
 global proc RefreshLinkedLightAttribute(string $nodeName)
@@ -128,10 +127,10 @@ global proc RefreshLinkedLightAttribute(string $nodeName)
 	if (!`attributeExists "linkedLight" $nodeName`)
 	{
 		addAttr -at enum -en "none" -ln linkedLight -r false -w true -k false -s true;
-		refreshEditorTemplates;
+		refreshEditorTemplates $nodeName;
 	}
 	
-	string $lightTypes[] = {"light", "RPRPhysicalLight"};
+	string $lightTypes[] = {"light", "RPRPhysicalLight", "RPRIES"};
 	string $lightNames = "";
 	
 	for($lightType in $lightTypes)
