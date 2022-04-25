@@ -129,7 +129,7 @@ global proc LightLinkingEnableChanged(string $nodeName)
 
 global proc RefreshLinkedLightAttribute(string $nodeName, string $ignoreLightName)
 {	
-	string $lightTypes[] = {"light", "RPRPhysicalLight", "RPRIES"};
+	string $lightTypes[] = {"ambientLight", "directionalLight", "spotLight", "pointLight", "RPRPhysicalLight", "RPRIES", "RPRIBL"};
 	string $lightNames = "";
 	
 	for($lightType in $lightTypes)

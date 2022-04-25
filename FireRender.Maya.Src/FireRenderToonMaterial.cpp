@@ -352,7 +352,7 @@ bool checkIsLight(MObject& node)
 {
 	MFnDependencyNode depNode(node);
 	MString type = depNode.typeName();
-	return node.hasFn(MFn::kLight) || type == "RPRPhysicalLight" || type == "RPRIES";
+	return node.hasFn(MFn::kLight) || type == "RPRPhysicalLight" || type == "RPRIES" || type == "RPRIBL";
 }
 
 void FireMaya::ToonMaterial::onLightAdded(MObject& node, void* clientData)

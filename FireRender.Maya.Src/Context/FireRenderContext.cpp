@@ -3651,17 +3651,22 @@ rpr_light FireRenderContext::GetRprLightFromNode(const MObject& node)
 
 	if (m_sceneObjects.find(uuid) == m_sceneObjects.end())
 	{
-		
 		return nullptr;
 	}
 
 	FireRenderObject* lightObjectPointer = m_sceneObjects[uuid].get();
 
 	FireRenderLight* fireRenderLight = dynamic_cast<FireRenderLight*>(lightObjectPointer);
+	FireRenderEnvLight* envLight = dynamic_cast<FireRenderEnvLight*>(lightObjectPointer);
 
 	if (fireRenderLight && !fireRenderLight->GetFrLight().isAreaLight)
 	{
 		frw::Light result = fireRenderLight->GetFrLight().light;
+		return result.Handle();
+	}
+	else if (envLight)
+	{
+		frw::EnvironmentLight result = envLight->getLight();
 		return result.Handle();
 	}
 
