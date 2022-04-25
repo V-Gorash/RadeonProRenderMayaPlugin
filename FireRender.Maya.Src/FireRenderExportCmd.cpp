@@ -68,7 +68,7 @@ MSyntax FireRenderExportCmd::newSyntax()
 	CHECK_MSTATUS(syntax.addFlag(kFilePathFlag, kFilePathFlagLong, MSyntax::kString));
 	CHECK_MSTATUS(syntax.addFlag(kSelectionFlag, kSelectionFlagLong, MSyntax::kNoArg));
 	CHECK_MSTATUS(syntax.addFlag(kAllFlag, kAllFlagLong, MSyntax::kNoArg));
-	CHECK_MSTATUS(syntax.addFlag(kFramesFlag, kFramesFlagLong, MSyntax::kBoolean, MSyntax::kLong, MSyntax::kLong, MSyntax::kBoolean, MSyntax::kBoolean));
+	CHECK_MSTATUS(syntax.addFlag(kFramesFlag, kFramesFlagLong, MSyntax::kBoolean, MSyntax::kLong, MSyntax::kLong, MSyntax::kBoolean, MSyntax::kBoolean, MSyntax::kBoolean));
 	CHECK_MSTATUS(syntax.addFlag(kCompressionFlag, kCompressionFlagLong, MSyntax::kString));
 	CHECK_MSTATUS(syntax.addFlag(kPadding, kPaddingLong, MSyntax::kString, MSyntax::kLong));
 	CHECK_MSTATUS(syntax.addFlag(kSelectedCamera, kSelectedCameraLong, MSyntax::kString));
@@ -92,11 +92,11 @@ std::string GetPluginLibrary(bool isRPR2)
 	return pluginDll;
 }
 
-bool SaveExportConfig(const std::wstring& filePath, TahoeContext& ctx, const std::wstring& fileName)
+bool SaveExportConfig(const std::wstring& filePath, NorthStarContext& ctx, const std::wstring& fileName)
 {
 	std::wstring configName = std::regex_replace(filePath, std::wregex(L"rpr$"), L"json");
 
-	bool isRPR2 = TahoeContext::IsGivenContextRPR2(&ctx);
+	bool isRPR2 = NorthStarContext::IsGivenContextNorthStar(&ctx);
 
 #ifdef WIN32
 	// MSVS added an overload to accommodate using open with wide strings where xcode did not.
@@ -362,11 +362,11 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 			return MS::kFailure;
 		}
 
-		TahoeContextPtr tahoeContextPtr = ContextCreator::CreateTahoeContext(GetTahoeVersionToUse());
+		NorthStarContextPtr northStarContextPtr = ContextCreator::CreateNorthStarContext();
 
-		tahoeContextPtr->setCallbackCreationDisabled(true);
+		northStarContextPtr->setCallbackCreationDisabled(true);
 
-		rpr_int res = tahoeContextPtr->initializeContext();
+		rpr_int res = northStarContextPtr->initializeContext();
 		if (res != RPR_SUCCESS)
 		{
 			MString msg;
@@ -374,9 +374,9 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 			return MS::kFailure;
 		}
 
-		tahoeContextPtr->setCallbackCreationDisabled(true);
+		northStarContextPtr->setCallbackCreationDisabled(true);
 
-		auto shader = tahoeContextPtr->GetShader(node);
+		auto shader = northStarContextPtr->GetShader(node);
 		if (!shader)
 		{
 			MGlobal::displayError("Invalid shader");
@@ -392,6 +392,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 	int lastFrame = 1;
 	bool isExportAsSingleFileEnabled = false;
 	bool isIncludeTextureCacheEnabled = false;
+	bool isAnimationAsSingleFileEnabled = false;
 	if (argData.isFlagSet(kFramesFlag))
 	{
 		argData.getFlagArgument(kFramesFlag, 0, isSequenceExportEnabled);
@@ -399,6 +400,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 		argData.getFlagArgument(kFramesFlag, 2, lastFrame);
 		argData.getFlagArgument(kFramesFlag, 3, isExportAsSingleFileEnabled);
 		argData.getFlagArgument(kFramesFlag, 4, isIncludeTextureCacheEnabled);
+		argData.getFlagArgument(kFramesFlag, 5, isAnimationAsSingleFileEnabled);
 	}
 
 	MString compressionOption = "None";
@@ -413,10 +415,10 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 		MCommonRenderSettingsData settings;
 		MRenderUtil::getCommonRenderSettings(settings);
 
-		TahoeContextPtr tahoeContextPtr = ContextCreator::CreateTahoeContext(GetTahoeVersionToUse());
+		NorthStarContextPtr northStarContextPtr = ContextCreator::CreateNorthStarContext();
 		AnimationExporter animationExporter(false);
 
-		tahoeContextPtr->SetRenderType(RenderType::ProductionRender);
+		northStarContextPtr->SetRenderType(RenderType::ProductionRender);
 
 		MDagPathArray cameras = GetSceneCameras();
 		unsigned int countCameras = cameras.length();
@@ -427,7 +429,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 
 			MDagPath cameraPath = getDefaultCamera();
 			MString cameraName = getNameByDagPath(cameraPath);
-			tahoeContextPtr->setCamera(cameraPath, true);
+			northStarContextPtr->setCamera(cameraPath, true);
 		}
 		else  // (cameras.length() >= 1)
 		{
@@ -435,12 +437,12 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 			MStatus res = argData.getFlagArgument(kSelectedCamera, 0, selectedCameraName);
 			if (res != MStatus::kSuccess)
 			{
-				tahoeContextPtr->setCamera(cameras[0], true);
+				northStarContextPtr->setCamera(cameras[0], true);
 			}
 			else
 			{
 				unsigned int selectedCameraIdx = 0;
-				tahoeContextPtr->setCamera(cameras[selectedCameraIdx], true);
+				northStarContextPtr->setCamera(cameras[selectedCameraIdx], true);
 
 				for (; selectedCameraIdx < countCameras; ++selectedCameraIdx)
 				{
@@ -448,18 +450,18 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 					MString cameraName = getNameByDagPath(cameraPath);
 					if (selectedCameraName == cameraName)
 					{
-						tahoeContextPtr->setCamera(cameras[selectedCameraIdx], true);
+						northStarContextPtr->setCamera(cameras[selectedCameraIdx], true);
 						break;
 					}
 				}
 			}
 		}
 
-		tahoeContextPtr->buildScene(false, false ,false);
-		tahoeContextPtr->setResolution(settings.width, settings.height, true);
+		northStarContextPtr->buildScene(false, false, false);
+		northStarContextPtr->setResolution(settings.width, settings.height, true);
 
 		// setup frame ranges
-		if (!isSequenceExportEnabled)
+		if (!isSequenceExportEnabled || isAnimationAsSingleFileEnabled)
 		{
 			lastFrame = firstFrame;
 		}
@@ -483,7 +485,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 		}
 
 		// read file name pattern and padding
-		if (isSequenceExportEnabled && !argData.isFlagSet(kPadding))
+		if (isSequenceExportEnabled && !isAnimationAsSingleFileEnabled && !argData.isFlagSet(kPadding))
 		{
 			MGlobal::displayError("Can't export sequence without setting name pattern and padding!");
 			return MS::kFailure;
@@ -501,7 +503,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 		for (int frame = firstFrame; frame <= lastFrame; ++frame)
 		{
 			// Move the animation to the next frame.
-			if (isSequenceExportEnabled)
+			if (isSequenceExportEnabled && !isAnimationAsSingleFileEnabled)
 			{
 				MTime time;
 				time.setValue(static_cast<double>(frame));
@@ -511,11 +513,11 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 
 			// Refresh the context so it matches the
 			// current animation state and start the render.
-			tahoeContextPtr->Freshen();
+			northStarContextPtr->Freshen();
 
 			// update file path
-			std::wstring newFilePath;
-			if (isSequenceExportEnabled)
+			std::wstring newFilePath; 
+			if (isSequenceExportEnabled && !isAnimationAsSingleFileEnabled)
 			{
 				//GetPattern();
 				std::wstring name_regex;
@@ -540,16 +542,20 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 			{
 				newFilePath = fileName + L"." + fileExtension;
 
-				animationExporter.Export(*tahoeContextPtr, &cameras, rprsContext);
+				// exporting animation as single file
+				if(isSequenceExportEnabled)
+				{
+					animationExporter.Export(*northStarContextPtr, &cameras, rprsContext);
+				}
 			}
 
 			// launch export
-			rpr_int statusExport = rprsExport(MString(newFilePath.c_str()).asUTF8(), tahoeContextPtr->context(), tahoeContextPtr->scene(),
+			rpr_int statusExport = rprsExport(MString(newFilePath.c_str()).asUTF8(), northStarContextPtr->context(), northStarContextPtr->scene(),
 				0, 0, 0, 0, 0, 0, SetupExportFlags(isExportAsSingleFileEnabled, isIncludeTextureCacheEnabled, compressionOption), 
 				rprsContext.Handle());
 			
 			// save config
-			bool res = SaveExportConfig(newFilePath, *tahoeContextPtr, fileName);
+			bool res = SaveExportConfig(newFilePath, *northStarContextPtr, fileName);
 			if (!res)
 			{
 				MGlobal::displayError("Unable to export render config!\n");
@@ -568,15 +574,15 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 	if (argData.isFlagSet(kSelectionFlag))
 	{
 		//initialize
-		TahoeContextPtr tahoeContextPtr = ContextCreator::CreateTahoeContext(GetTahoeVersionToUse());
+		NorthStarContextPtr northStarContextPtr = ContextCreator::CreateNorthStarContext();
 
-		tahoeContextPtr->setCallbackCreationDisabled(true);
-		tahoeContextPtr->buildScene();
+		northStarContextPtr->setCallbackCreationDisabled(true);
+		northStarContextPtr->buildScene();
 
 		MDagPathArray cameras = GetSceneCameras(true);
 		if ( cameras.length() >= 1 )
 		{
-			tahoeContextPtr->setCamera(cameras[0]);
+			northStarContextPtr->setCamera(cameras[0]);
 		}
 
 		MSelectionList sList;
@@ -598,7 +604,7 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 
 			MFnDependencyNode nodeFn(node);
 
-			FireRenderObject* frObject = tahoeContextPtr->getRenderObject(getNodeUUid(node));
+			FireRenderObject* frObject = northStarContextPtr->getRenderObject(getNodeUUid(node));
 			if (!frObject)
 				continue;
 
@@ -619,10 +625,8 @@ MStatus FireRenderExportCmd::doIt(const MArgList & args)
 
 			else if (auto mesh = dynamic_cast<FireRenderMesh*>(frObject))
 			{
-				for (auto element : mesh->Elements())
-				{
-					shapes.push_back(element.shape.Handle());
-				}
+				if (!mesh->Elements().empty())
+					shapes.push_back(mesh->Elements().back().shape.Handle());
 			}
 			else if (auto frEnvLight = static_cast<FireRenderEnvLight*>(frObject))
 			{

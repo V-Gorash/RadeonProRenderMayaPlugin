@@ -98,6 +98,16 @@ void FireRenderIpr::updateRegion()
 		!(m_region.getWidth() == m_width && m_region.getHeight() == m_height);
 
 	// Default to the full render view if the region is invalid.
+
+	if (m_isRegion)
+	{
+		// sometimes Maya send us region which is bigger then entire size. In this case - reset region rendering
+		if (m_region.getWidth() > m_width || m_region.getHeight() > m_height)
+		{
+			m_isRegion = false;
+		}
+	}
+
 	if (!m_isRegion)
 		m_region = RenderRegion(0, m_width - 1, m_height - 1, 0);
 
@@ -192,7 +202,7 @@ bool FireRenderIpr::start()
 			return false;
 		}
 
-		if (TahoeContext::IsGivenContextRPR2(m_contextPtr.get()))
+		if (NorthStarContext::IsGivenContextNorthStar(m_contextPtr.get()))
 		{
 			m_NorthStarRenderingHelper.SetData(m_contextPtr.get(), std::bind(&FireRenderIpr::OnBufferAvailableCallback, this, std::placeholders::_1));
 		}

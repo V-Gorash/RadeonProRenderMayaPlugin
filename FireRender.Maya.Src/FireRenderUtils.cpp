@@ -501,6 +501,8 @@ void FireRenderGlobalsData::readFromCurrentScene()
 		aovs.readFromGlobals(frGlobalsNode);
 
 		readDenoiserParameters(frGlobalsNode);
+
+		readAirVolumeParameters(frGlobalsNode);
 	});
 }
 
@@ -545,6 +547,49 @@ bool FireRenderGlobalsData::isExrMultichannelEnabled()
 	}
 
 	return false;
+}
+
+void FireRenderGlobalsData::readAirVolumeParameters(const MFnDependencyNode& frGlobalsNode)
+{
+	MPlug plug = frGlobalsNode.findPlug("airVolumeEnabled");
+	if (!plug.isNull())
+		airVolumeSettings.enabled = plug.asBool();
+
+	plug = frGlobalsNode.findPlug("fogColor", false);
+	if (!plug.isNull())
+	{
+		MDataHandle colorDataHandle;
+		MStatus status0 = plug.getValue(colorDataHandle);
+		assert(status0 == MStatus::kSuccess);
+		float3& color0 = colorDataHandle.asFloat3();
+		airVolumeSettings.fogColor = MColor(color0);
+	}
+
+	plug = frGlobalsNode.findPlug("fogDistance");
+	if (!plug.isNull())
+		airVolumeSettings.fogDistance = plug.asFloat();
+
+	plug = frGlobalsNode.findPlug("fogHeight");
+	if (!plug.isNull())
+		airVolumeSettings.fogHeight = plug.asFloat();
+
+	plug = frGlobalsNode.findPlug("airVolumeDensity");
+	if (!plug.isNull())
+		airVolumeSettings.airVolumeDensity = plug.asFloat();
+
+	plug = frGlobalsNode.findPlug("airVolumeColor", false);
+	if (!plug.isNull())
+	{
+		MDataHandle colorDataHandle;
+		MStatus status0 = plug.getValue(colorDataHandle);
+		assert(status0 == MStatus::kSuccess);
+		float3& color0 = colorDataHandle.asFloat3();
+		airVolumeSettings.airVolumeColor = MColor(color0);
+	}
+
+	plug = frGlobalsNode.findPlug("airVolumeClamp");
+	if (!plug.isNull())
+		airVolumeSettings.airVolumeClamp = plug.asFloat();
 }
 
 void FireRenderGlobalsData::readDenoiserParameters(const MFnDependencyNode& frGlobalsNode)
@@ -1704,7 +1749,7 @@ HardwareResources::HardwareResources()
             doWhiteList = false;
         }
 
-		int tahoeID = TahoeContext::GetPluginID(TahoePluginVersion::RPR1);
+		int tahoeID = NorthStarContext::GetPluginID();
 
         device.creationFlag = device.creationFlag | additionalFlags;
 		device.compatibility = rprIsDeviceCompatible(tahoeID, RPR_TOOLS_DEVICE(i), nullptr, doWhiteList, os, additionalFlags );
@@ -2251,26 +2296,9 @@ RenderQuality GetRenderQualityForRenderType(RenderType renderType)
 	return quality;
 }
 
-TahoePluginVersion GetTahoeVersionToUse()
-{
-	MPlug plug = GetRadeonProRenderGlobalsPlug("tahoeVersion");
-
-	if (!plug.isNull())
-	{
-		return static_cast<TahoePluginVersion>(plug.asShort());
-	}
-	else
-	{
-		// plug should not be null
-		assert(false);
-	}
-
-	return TahoePluginVersion::RPR1;
-}
-
 bool CheckIsInteractivePossible()
 {
-	// return treu in anticipation that IPR For RPR2 would be fixed for the next Release.
+	// return true in anticipation that IPR For RPR2 would be fixed for the next Release.
 	return true;
 }
 
