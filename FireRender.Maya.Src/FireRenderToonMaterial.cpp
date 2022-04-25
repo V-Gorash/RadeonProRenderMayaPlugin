@@ -317,7 +317,7 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 	MFnDependencyNode shaderNode(thisMObject());
 	
 	// We have to use MEL command to get enum value as string
-	MString lightName = MGlobal::executeCommandStringResult("getAttr -as " + shaderNode.uniqueName() + ".linkedLight");
+	MString lightName = MGlobal::executeCommandStringResult("getAttr -as " + shaderNode.name() + ".linkedLight");
 	MSelectionList selection;
 	MObject light;
 	selection.add(lightName);

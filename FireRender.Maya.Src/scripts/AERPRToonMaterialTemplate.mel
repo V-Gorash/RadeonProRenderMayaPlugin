@@ -32,9 +32,6 @@ global proc AERPRToonMaterialTemplate( string $nodeName )
 
 		editorTemplate -l "Transparency Enable" -addControl "transparencyEnable" "TransparencyEnableChanged";
 		editorTemplate -l "Transparency Level" -addControl "transparencyLevel";
-		
-		editorTemplate -l "Light Linking Enable" -addControl "enableLightLinking" "LightLinkingEnableChanged";
-		editorTemplate -l "Linked Light" -addControl "linkedLight";
 
 		editorTemplate -beginLayout "Advanced" -collapse 0;
 			editorTemplate -l "Enable 5 Colors" -addControl "enable5Colors" "UpdateRampFieldsEnable";
@@ -56,6 +53,9 @@ global proc AERPRToonMaterialTemplate( string $nodeName )
 			editorTemplate -l "Mid Level Mix" -addControl "rampRange1";
 			editorTemplate -l "Highlight Level Mix" -addControl "rampRange2";
 			editorTemplate -l "Highlight Level Mix 2" -addControl "rampRangeHighlight";
+			
+			editorTemplate -l "Light Linking Enable" -addControl "enableLightLinking" "LightLinkingEnableChanged";
+			editorTemplate -l "Linked Light" -addControl "linkedLight";
 			
 		editorTemplate -endLayout;
 	editorTemplate -endLayout;
@@ -82,6 +82,8 @@ global proc ShowAdvancedChanges(string $nodeName)
 
 	editorTemplate -dimControl $nodeName rampPosition1 $dim;
 	editorTemplate -dimControl $nodeName rampPosition2 $dim;
+	
+	editorTemplate -dimControl $nodeName enableLightLinking $dim;
 
 	UpdateRampFieldsEnable($nodeName);
 }
