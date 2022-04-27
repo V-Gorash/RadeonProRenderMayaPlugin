@@ -325,7 +325,7 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 
 	if (light.isNull()) 
 	{
-		MGlobal::displayError("Unable to find linked light!\n");
+		MGlobal::displayError("Unable to find linked light!");
 		return;
 	}
 
@@ -333,7 +333,6 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 
 	if (!rprLight)
 	{
-		MGlobal::displayError("Unable to find linked light!\n");
 		return;
 	}
 

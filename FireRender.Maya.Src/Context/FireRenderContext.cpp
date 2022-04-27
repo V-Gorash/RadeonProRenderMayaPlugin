@@ -3582,6 +3582,13 @@ rpr_light FireRenderContext::GetRprLightFromNode(const MObject& node)
 
 	if (m_sceneObjects.find(uuid) == m_sceneObjects.end())
 	{
+		MGlobal::displayError("Unable to find linked light!");
+		return nullptr;
+	}
+
+	if (GetScope().GetCurrentlyParsedMesh() == nullptr)
+	{
+		MGlobal::displayError("'GetRprLightFromNode' method called outside of mesh parsing scope");
 		return nullptr;
 	}
 
@@ -3592,16 +3599,18 @@ rpr_light FireRenderContext::GetRprLightFromNode(const MObject& node)
 
 	if (fireRenderLight && !fireRenderLight->GetFrLight().isAreaLight)
 	{
+		fireRenderLight->addLinkedMesh(GetScope().GetCurrentlyParsedMesh());
 		frw::Light result = fireRenderLight->GetFrLight().light;
 		return result.Handle();
 	}
 	else if (envLight)
 	{
+		envLight->addLinkedMesh(GetScope().GetCurrentlyParsedMesh());
 		frw::EnvironmentLight result = envLight->getLight();
 		return result.Handle();
 	}
 
-
+	MGlobal::displayWarning("light with uuid " + MString(lightObjectPointer->uuid().c_str()) + " is not support linking");
 	return nullptr;
 	
 }

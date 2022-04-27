@@ -684,6 +684,7 @@ public:
 	bool setupUpscalerForViewport(RV_PIXEL* data);
 	bool setupDenoiserForViewport();
 
+	// used for toon shader light linking
 	rpr_light GetRprLightFromNode(const MObject& node) override;
 
 protected:
