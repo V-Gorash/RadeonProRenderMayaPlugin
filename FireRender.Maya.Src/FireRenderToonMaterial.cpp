@@ -332,9 +332,9 @@ void FireMaya::ToonMaterial::linkLight(Scope& scope, frw::Shader& shader)
 		return;
 	}
 
-	rpr_light rprLight = scope.GetIContextInfo()->GetRprLightFromNode(light);
+	frw::Light rprLight = scope.GetIContextInfo()->GetRprLightFromNode(light);
 
-	if (!rprLight)
+	if (!rprLight.IsValid())
 	{
 		return;
 	}

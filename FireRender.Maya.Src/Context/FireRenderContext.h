@@ -685,7 +685,7 @@ public:
 	bool setupDenoiserForViewport();
 
 	// used for toon shader light linking
-	rpr_light GetRprLightFromNode(const MObject& node) override;
+	frw::Light GetRprLightFromNode(const MObject& node) override;
 
 protected:
 	static int INCORRECT_PLUGIN_ID;

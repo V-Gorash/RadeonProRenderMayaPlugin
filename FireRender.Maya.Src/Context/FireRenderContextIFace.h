@@ -18,6 +18,7 @@ enum class RenderQuality;
 namespace frw
 {
 	enum ShaderType;
+	class Light;
 }
 
 namespace FireMaya
@@ -61,5 +62,5 @@ public:
 	virtual bool IsGLTFExport() const = 0;
 
 	// used for toon shader light linking
-	virtual rpr_light GetRprLightFromNode(const MObject& node) = 0;
+	virtual frw::Light GetRprLightFromNode(const MObject& node) = 0;
 };
