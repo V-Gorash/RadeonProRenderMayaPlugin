@@ -323,7 +323,7 @@ void FireRenderContext::enableAOVAndReset(int index, bool flag, rpr_GLuint* glTe
 
 bool aovExists(int index)
 {
-	if (index <= RPR_AOV_CAMERA_NORMAL)
+	if (index <= RPR_AOV_MATTE_PASS)
 		return true;
 
 	if ((index >= RPR_AOV_CRYPTOMATTE_MAT0) && (index <= RPR_AOV_CRYPTOMATTE_MAT5))
@@ -1563,6 +1563,7 @@ void FireRenderContext::DebugDumpAOV(int aov, char* pathToFile /*= nullptr*/) co
 		,{RPR_AOV_VARIANCE, "RPR_AOV_VARIANCE" }
 		,{RPR_AOV_VIEW_SHADING_NORMAL, "RPR_AOV_VIEW_SHADING_NORMAL" }
 		,{RPR_AOV_REFLECTION_CATCHER, "RPR_AOV_REFLECTION_CATCHER" }
+		,{RPR_AOV_MATTE_PASS, "RPR_AOV_MATTE_PASS" }
 		,{RPR_AOV_CRYPTOMATTE_MAT0, "RPR_AOV_CRYPTOMATTE_MAT0" }
 		,{RPR_AOV_CRYPTOMATTE_MAT1, "RPR_AOV_CRYPTOMATTE_MAT1" }
 		,{RPR_AOV_CRYPTOMATTE_MAT2, "RPR_AOV_CRYPTOMATTE_MAT2" }

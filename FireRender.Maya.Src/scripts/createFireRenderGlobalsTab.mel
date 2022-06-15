@@ -338,6 +338,7 @@ global proc createFireRenderRenderPassesFrame(string $parent)
 		attrControlGrp -label "Subsurface / Volume" -attribute "RadeonProRenderGlobals.aovVolume";
 		attrControlGrp -label "Albedo" -attribute "RadeonProRenderGlobals.aovAlbedo";
 		attrControlGrp -label "Deep Color" -attribute "RadeonProRenderGlobals.aovDeepColor";
+		attrControlGrp -label "Matte Pass" -attribute "RadeonProRenderGlobals.aovMattePass";
 		attrControlGrp -label "Crypto Material Mat0" -attribute "RadeonProRenderGlobals.aovCryptoMaterialMat0";
 		attrControlGrp -label "Crypto Material Mat1" -attribute "RadeonProRenderGlobals.aovCryptoMaterialMat1";
 		attrControlGrp -label "Crypto Material Mat2" -attribute "RadeonProRenderGlobals.aovCryptoMaterialMat2";
