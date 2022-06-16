@@ -536,7 +536,7 @@ global proc createEnvironmentFrame2(string $parent)
 	setUITemplate -pushTemplate attributeEditorTemplate;
 	columnLayout -adjustableColumn true miEnvironmentLayout;
 
-	rowLayout -numberOfColumns 4 -cw 2 130 -cw 4 60 miIblLayout;
+	rowLayout -numberOfColumns 3 -cw 2 130 miIblLayout;
 		text -label "Image Based Lighting";
 		button -label "Create"
 			-command "createIBLNodeRPR"
@@ -544,10 +544,16 @@ global proc createEnvironmentFrame2(string $parent)
 		symbolButton -image "inArrow.png"
 			-command "showIBLEditorRPR"
 				frOpenIblButton;
+	setParent ..;
+	
+	rowLayout -numberOfColumns 3 -cw 2 50 miIblParamsLayout;
+		text -label "IBL Options";
 		checkBox -label "Flip" -changeCommand flipIBLValueChanged chkboxCtl;
+		checkBox -label "Display" chkboxCtl2;
 	setParent ..;
 
 	connectControl chkboxCtl "RadeonProRenderGlobals.flipIBL";
+	connectControl chkboxCtl2 "RadeonProRenderGlobals.displayIBL";
 
 	updateIBLInterfaceRPR();
 

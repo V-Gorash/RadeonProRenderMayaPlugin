@@ -1655,6 +1655,18 @@ bool IsFlipIBL()
 	return false;
 }
 
+bool IsDisplayIBL()
+{
+	MPlug displayPlug = GetRadeonProRenderGlobalsPlug("displayIBL");
+
+	if (!displayPlug.isNull())
+	{
+		return displayPlug.asBool();
+	}
+
+	return false;
+}
+
 MObject findDependNode(MString name)
 {
 	MSelectionList selectionList;
