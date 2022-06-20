@@ -30,12 +30,10 @@ global proc AEMatteCheckEnableSC(string $nodeName)
 	setAttr RadeonProRenderGlobals.aovShadowCatcher ($value);
 
 	int $isShadowCatcher = `getAttr RadeonProRenderGlobals.aovShadowCatcher`;
-	int $isReflectionCatcher = `getAttr RadeonProRenderGlobals.aovReflectionCatcher`;
-	if (($isShadowCatcher == 1) && ($isReflectionCatcher == 0))
+	if ($isShadowCatcher == 1)
 	{
 		// Set aovs to ON state
-		setAttr RadeonProRenderGlobals.aovBackground 1;
-		setAttr RadeonProRenderGlobals.aovOpacity 1;
+		setAttr RadeonProRenderGlobals.aovMattePass 1;
 	}
 }
 
@@ -49,9 +47,8 @@ global proc AEMatteCheckEnableRC(string $nodeName)
 
 	setAttr RadeonProRenderGlobals.aovReflectionCatcher ($value);
 
-	int $isShadowCatcher = `getAttr RadeonProRenderGlobals.aovShadowCatcher`;
 	int $isReflectionCatcher = `getAttr RadeonProRenderGlobals.aovReflectionCatcher`;
-	if (($isShadowCatcher == 0) && ($isReflectionCatcher == 1))
+	if ($isReflectionCatcher == 1)
 	{
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovBackground 1;
