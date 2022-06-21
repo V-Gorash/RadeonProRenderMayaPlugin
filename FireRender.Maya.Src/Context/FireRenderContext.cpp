@@ -1485,8 +1485,7 @@ bool FireRenderContext::ConsiderShadowReflectionCatcherOverride(const ReadFrameB
 	bool isShadowCather = (params.aov == RPR_AOV_COLOR) &&
 		params.mergeShadowCatcher &&
 		m.framebufferAOV[RPR_AOV_SHADOW_CATCHER] &&
-		m.framebufferAOV[RPR_AOV_BACKGROUND] &&
-		m.framebufferAOV[RPR_AOV_OPACITY] &&
+		m.framebufferAOV[RPR_AOV_MATTE_PASS] &&
 		scope.GetShadowCatcherShader();
 
 	/**
@@ -3106,9 +3105,8 @@ void FireRenderContext::rifShadowCatcherOutput(const ReadFrameBufferRequestParam
 	const bool forceCPUContext = true;
 
 	const rpr_framebuffer colorFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_COLOR);
-	const rpr_framebuffer opacityFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_OPACITY);
+	const rpr_framebuffer mattePassFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_MATTE_PASS);
 	const rpr_framebuffer shadowCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_SHADOW_CATCHER);
-	const rpr_framebuffer backgroundFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_BACKGROUND);
 
 	try
 	{
@@ -3118,9 +3116,8 @@ void FireRenderContext::rifShadowCatcherOutput(const ReadFrameBufferRequestParam
 		std::shared_ptr<ImageFilter> shadowCatcherFilter = std::shared_ptr<ImageFilter>(new ImageFilter(context(), m_width, m_height, mlModelsFolder.asChar(), forceCPUContext));
 		shadowCatcherFilter->CreateFilter(RifFilterType::ShadowCatcher);
 		shadowCatcherFilter->AddInput(RifColor, colorFrameBuffer, 0.1f);
-		shadowCatcherFilter->AddInput(RifOpacity, opacityFrameBuffer, 0.1f);
+		shadowCatcherFilter->AddInput(RifMattePass, mattePassFrameBuffer, 0.1f);
 		shadowCatcherFilter->AddInput(RifShadowCatcher, shadowCatcherFrameBuffer, 0.1f);
-		shadowCatcherFilter->AddInput(RifBackground, backgroundFrameBuffer, 0.1f);
 
 		RifParam p;
 
@@ -3227,6 +3224,7 @@ void FireRenderContext::rifReflectionShadowCatcherOutput(const ReadFrameBufferRe
 	const rpr_framebuffer shadowCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_SHADOW_CATCHER);
 	const rpr_framebuffer reflectionCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_REFLECTION_CATCHER);
 	const rpr_framebuffer backgroundFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_BACKGROUND);
+	const rpr_framebuffer mattePassFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_MATTE_PASS);
 
 	try
 	{
@@ -3240,6 +3238,7 @@ void FireRenderContext::rifReflectionShadowCatcherOutput(const ReadFrameBufferRe
 		catcherFilter->AddInput(RifShadowCatcher, shadowCatcherFrameBuffer, 0.1f);
 		catcherFilter->AddInput(RifReflectionCatcher, reflectionCatcherFrameBuffer, 0.1f);
 		catcherFilter->AddInput(RifBackground, backgroundFrameBuffer, 0.1f);
+		catcherFilter->AddInput(RifMattePass, mattePassFrameBuffer, 0.1f);
 
 		RifParam p;
 
