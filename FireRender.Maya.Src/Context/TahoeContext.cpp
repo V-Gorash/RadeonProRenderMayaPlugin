@@ -84,6 +84,9 @@ rpr_int NorthStarContext::CreateContextInternal(rpr_creation_flags createFlags, 
 	int res = rprCreateContext(RPR_API_VERSION, plugins, pluginCount, createFlags, ctxProperties.data(), cachePath.asUTF8(), pContext);
 #endif
 
+	// disable built-in shadow catcher composite
+	rprContextSetParameterByKey1u(*pContext, RPR_CONTEXT_SHADOW_CATCHER_BAKING, (rpr_uint)0);
+
 	return res;
 }
 
