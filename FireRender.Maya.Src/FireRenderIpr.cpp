@@ -190,6 +190,8 @@ bool FireRenderIpr::start()
 			m_contextPtr->enableAOV(RPR_AOV_OPACITY);
 		if (globals.aovs.getAOV(RPR_AOV_BACKGROUND)->active)
 			m_contextPtr->enableAOV(RPR_AOV_BACKGROUND);
+		if (globals.aovs.getAOV(RPR_AOV_MATTE_PASS)->active)
+			m_contextPtr->enableAOV(RPR_AOV_MATTE_PASS);
 		if (globals.aovs.getAOV(RPR_AOV_SHADOW_CATCHER)->active)
 			m_contextPtr->enableAOV(RPR_AOV_SHADOW_CATCHER);
 		if (globals.aovs.getAOV(RPR_AOV_REFLECTION_CATCHER)->active)
