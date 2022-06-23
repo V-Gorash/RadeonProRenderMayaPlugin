@@ -172,20 +172,14 @@ frw::Shader FireMaya::ShadowCatcherMaterial::GetShader(Scope& scope)
 	{
 		// Code below this line copied from FireRenderStandardMaterial
 		frw::Value shadowColor = scope.GetValue(shaderNode.findPlug(Attribute::shadowColor, false));
-		frw::Value bgColor = scope.GetValue(shaderNode.findPlug(Attribute::bgColor, false));
 		frw::Value shadowAlpha = scope.GetValue(shaderNode.findPlug(Attribute::shadowTransparency, false));
 		frw::Value weight = scope.GetValue(shaderNode.findPlug(Attribute::shadowWeight, false));
-		frw::Value bgTransp = scope.GetValue(shaderNode.findPlug(Attribute::bgTransparency, false));
-		frw::Value bgWeight = scope.GetValue(shaderNode.findPlug(Attribute::bgWeight, false));
 		FireRenderContext* pContext = dynamic_cast<FireRenderContext*>(scope.GetIContextInfo());
 		if (pContext)
 		{
 			pContext->m_shadowColor = { shadowColor.GetX(), shadowColor.GetY(), shadowColor.GetZ() };
 			pContext->m_shadowTransparency = shadowAlpha.GetX();
-			pContext->m_backgroundTransparency = bgTransp.GetX();
 			pContext->m_shadowWeight = weight.GetX();
-			pContext->m_bgColor = { bgColor.GetX(), bgColor.GetY(), bgColor.GetZ() };
-			pContext->m_bgWeight = bgWeight.GetX();
 		}
 
 		if (ctxInfo->IsShadowColorSupported() && shadowColor.IsFloat())
@@ -227,6 +221,18 @@ frw::Shader FireMaya::ShadowCatcherMaterial::GetShader(Scope& scope)
 		shader.xSetValue(RPR_MATERIAL_INPUT_UBER_REFLECTION_ROUGHNESS, scope.GetValue(shaderNode.findPlug(Attribute::reflectionRoughness, false)));
 		shader.xSetParameterU(RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE, RPR_UBER_MATERIAL_IOR_MODE_METALNESS);
 		shader.xSetValue(RPR_MATERIAL_INPUT_UBER_REFLECTION_METALNESS, frw::Value(1.0f, 1.0f, 1.0f));
+
+		frw::Value bgColor = scope.GetValue(shaderNode.findPlug(Attribute::bgColor, false));
+		frw::Value bgWeight = scope.GetValue(shaderNode.findPlug(Attribute::bgWeight, false));
+		frw::Value bgTransp = scope.GetValue(shaderNode.findPlug(Attribute::bgTransparency, false));
+
+		FireRenderContext* pContext = dynamic_cast<FireRenderContext*>(scope.GetIContextInfo());
+		if (pContext)
+		{
+			pContext->m_bgColor = { bgColor.GetX(), bgColor.GetY(), bgColor.GetZ() };
+			pContext->m_backgroundTransparency = bgTransp.GetX();
+			pContext->m_bgWeight = bgWeight.GetX();
+		}
 
 		// reflection catcher specific params
 		shader.SetReflectionCatcher(true);
