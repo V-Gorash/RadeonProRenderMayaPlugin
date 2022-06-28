@@ -34,9 +34,6 @@ namespace
 	{
 		MObject scenabled;
 		MObject bgIsEnv;
-		MObject bgWeight;
-		MObject	bgColor;
-		MObject bgTransparency;
 		MObject shadowColor;
 		MObject shadowWeight;
 		MObject shadowTransparency;
@@ -82,8 +79,6 @@ MStatus FireMaya::ShadowCatcherMaterial::initialize()
 	{
 		{&Attribute::reflectionWeight, "reflectionWeight", "rcwt", 0.0, 1.0, 1.0, MFnNumericData::kFloat},
 		{&Attribute::reflectionRoughness, "reflectionRoughness", "rcrs", 0.0, 1.0, 0.01f, MFnNumericData::kFloat},
-		{&Attribute::bgWeight, "bgWeight", "bgw", 0.0, 1.0, 1.0, MFnNumericData::kFloat},
-		{&Attribute::bgTransparency, "bgTransparency", "bgt", 0.0, 1.0, 0.0, MFnNumericData::kFloat},
 		{&Attribute::shadowTransparency, "shadowTransp", "st", 0.0, 1.0, 0.0, MFnNumericData::kFloat},
 		{&Attribute::shadowWeight, "shadowWeight", "sw", 0.0, 1.0, 1.0, MFnNumericData::kFloat}
 	};
@@ -98,7 +93,6 @@ MStatus FireMaya::ShadowCatcherMaterial::initialize()
 
 	std::vector<ColorAttributeEntry> colorAttributes = 
 	{
-		{&Attribute::bgColor, "bgColor", "bgc", {1.0f, 1.0f, 1.0f} },
 		{&Attribute::shadowColor, "shadowColor", "sc", { 0.0f, 0.0f, 0.0f } },
 	};
 
@@ -199,13 +193,6 @@ frw::Shader FireMaya::ShadowCatcherMaterial::GetShader(Scope& scope)
 
 		bool bgIsEnv = shaderNode.findPlug(Attribute::bgIsEnv, false).asBool();
 		shader.SetBackgroundIsEnvironment(bgIsEnv);
-	
-		if (!bgIsEnv)
-		{
-			shader.xSetValue(RPR_MATERIAL_INPUT_UBER_DIFFUSE_COLOR, scope.GetValue(shaderNode.findPlug(Attribute::bgColor, false)));
-			shader.xSetValue(RPR_MATERIAL_INPUT_UBER_DIFFUSE_WEIGHT, scope.GetValue(shaderNode.findPlug(Attribute::bgWeight, false)));
-			shader.xSetValue(RPR_MATERIAL_INPUT_UBER_TRANSPARENCY, scope.GetValue(shaderNode.findPlug(Attribute::bgTransparency, false)));
-		}
 
 		shader.SetShadowCatcher(true);
 	}
@@ -221,18 +208,6 @@ frw::Shader FireMaya::ShadowCatcherMaterial::GetShader(Scope& scope)
 		shader.xSetValue(RPR_MATERIAL_INPUT_UBER_REFLECTION_ROUGHNESS, scope.GetValue(shaderNode.findPlug(Attribute::reflectionRoughness, false)));
 		shader.xSetParameterU(RPR_MATERIAL_INPUT_UBER_REFLECTION_MODE, RPR_UBER_MATERIAL_IOR_MODE_METALNESS);
 		shader.xSetValue(RPR_MATERIAL_INPUT_UBER_REFLECTION_METALNESS, frw::Value(1.0f, 1.0f, 1.0f));
-
-		frw::Value bgColor = scope.GetValue(shaderNode.findPlug(Attribute::bgColor, false));
-		frw::Value bgWeight = scope.GetValue(shaderNode.findPlug(Attribute::bgWeight, false));
-		frw::Value bgTransp = scope.GetValue(shaderNode.findPlug(Attribute::bgTransparency, false));
-
-		FireRenderContext* pContext = dynamic_cast<FireRenderContext*>(scope.GetIContextInfo());
-		if (pContext)
-		{
-			pContext->m_bgColor = { bgColor.GetX(), bgColor.GetY(), bgColor.GetZ() };
-			pContext->m_backgroundTransparency = bgTransp.GetX();
-			pContext->m_bgWeight = bgWeight.GetX();
-		}
 
 		// reflection catcher specific params
 		shader.SetReflectionCatcher(true);

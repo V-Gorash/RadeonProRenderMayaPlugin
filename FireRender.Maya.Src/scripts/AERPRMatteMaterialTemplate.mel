@@ -39,9 +39,6 @@ global proc AEMatteCheckEnableRC(string $nodeName)
 	string $nodeAttr = $nodeName + ".rcenabled";
 	int $value = `getAttr $nodeAttr`;
 
-	editorTemplate -dimControl $nodeName "bgWeight" ($value == 0);
-	editorTemplate -dimControl $nodeName "bgColor" ($value == 0);
-	editorTemplate -dimControl $nodeName "bgTransparency" ($value == 0);
 	editorTemplate -dimControl $nodeName "reflectionRoughness" ($value == 0);
 	editorTemplate -dimControl $nodeName "reflectionWeight" ($value == 0);
 
@@ -97,9 +94,6 @@ global proc AERPRMatteMaterialTemplate( string $nodeName )
 		editorTemplate -l "Reflection roughness" -addControl "reflectionRoughness";
 		editorTemplate -l "Reflection weight" -addControl "reflectionWeight";
 		
-		editorTemplate -l "Background weight" -addControl "bgWeight";
-		editorTemplate -l "Background color" -addControl "bgColor";
-		editorTemplate -l "Background transparency" -addControl "bgTransparency";
 	editorTemplate -endLayout;
 
 	AEdependNodeTemplate $nodeName;

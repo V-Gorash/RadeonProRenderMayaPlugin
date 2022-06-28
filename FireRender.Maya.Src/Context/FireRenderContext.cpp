@@ -107,11 +107,8 @@ FireRenderContext::FireRenderContext() :
 	m_denoiserFilter(nullptr),
 	m_upscalerFilter(nullptr),
 	m_shadowColor{ 0.0f, 0.0f, 0.0f },
-	m_bgColor{ 1.0f, 1.0f, 1.0f },
 	m_shadowTransparency(0),
-	m_backgroundTransparency(0),
 	m_shadowWeight(1),
-	m_bgWeight(1),
 	m_RenderType(RenderType::Undefined),
 	m_bIsGLTFExport(false),
 	m_IterationsPowerOf2Mode(false),
@@ -3136,21 +3133,6 @@ void FireRenderContext::rifShadowCatcherOutput(const ReadFrameBufferRequestParam
 		p = { RifParamType::RifOther, (rif_float)params.shadowTransp };
 		shadowCatcherFilter->AddParam("shadowTransp", p);
 
-		p = { RifParamType::RifOther, (rif_float)params.bgWeight };
-		shadowCatcherFilter->AddParam("bgWeight", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgTransparency };
-		shadowCatcherFilter->AddParam("bgTransparency", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[0] };
-		shadowCatcherFilter->AddParam("bgColor[0]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[1] };
-		shadowCatcherFilter->AddParam("bgColor[1]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[2] };
-		shadowCatcherFilter->AddParam("bgColor[2]", p);
-
 		shadowCatcherFilter->AttachFilter();
 
 		shadowCatcherFilter->Run();
@@ -3184,23 +3166,6 @@ void FireRenderContext::rifReflectionCatcherOutput(const ReadFrameBufferRequestP
 		catcherFilter->AddInput(RifOpacity, opacityFrameBuffer, 0.1f);
 		catcherFilter->AddInput(RifReflectionCatcher, reflectionCatcherFrameBuffer, 0.1f);
 		catcherFilter->AddInput(RifBackground, backgroundFrameBuffer, 0.1f);
-
-		RifParam p;
-
-		p = { RifParamType::RifOther, (rif_float)params.bgWeight };
-		catcherFilter->AddParam("bgWeight", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgTransparency };
-		catcherFilter->AddParam("bgTransparency", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[0] };
-		catcherFilter->AddParam("bgColor[0]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[1] };
-		catcherFilter->AddParam("bgColor[1]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[2] };
-		catcherFilter->AddParam("bgColor[2]", p);
 
 		catcherFilter->AttachFilter();
 
@@ -3257,21 +3222,6 @@ void FireRenderContext::rifReflectionShadowCatcherOutput(const ReadFrameBufferRe
 		p = { RifParamType::RifOther, (rif_float)params.shadowTransp };
 		catcherFilter->AddParam("shadowTransp", p);
 
-		p = { RifParamType::RifOther, (rif_float)params.bgWeight };
-		catcherFilter->AddParam("bgWeight", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgTransparency };
-		catcherFilter->AddParam("bgTransparency", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[0] };
-		catcherFilter->AddParam("bgColor[0]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[1] };
-		catcherFilter->AddParam("bgColor[1]", p);
-
-		p = { RifParamType::RifOther, (rif_float)params.bgColor[2] };
-		catcherFilter->AddParam("bgColor[2]", p);
-
 		catcherFilter->AttachFilter();
 
 		catcherFilter->Run();
@@ -3283,110 +3233,6 @@ void FireRenderContext::rifReflectionShadowCatcherOutput(const ReadFrameBufferRe
 	{
 		ErrorPrint(e.what());
 	}
-}
-
-void FireRenderContext::compositeShadowCatcherOutput(const ReadFrameBufferRequestParams& params)
-{
-	RPR_THREAD_ONLY;
-
-	// get data from frame buffers
-	rpr_framebuffer colorFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_COLOR);
-	rpr_framebuffer opacityFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_OPACITY);
-	rpr_framebuffer shadowCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_SHADOW_CATCHER);
-	rpr_framebuffer backgroundFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_BACKGROUND);
-
-	// inputs
-	frw::Context context = GetContext();
-	CompositeWrapper noAlpha(context, 1.0f, 0.0f); // Input Wrapper
-	CompositeWrapper color(context, colorFrameBuffer);
-	CompositeWrapper opacity(context, opacityFrameBuffer);
-	CompositeWrapper shadowCatcher(context, shadowCatcherFrameBuffer);
-	CompositeWrapper shadowColor(context, params.shadowColor[0], params.shadowColor[1], params.shadowColor[2], 1.0f);
-	CompositeWrapper const1(context, 1.0f);
-	CompositeWrapper shadowTransp(context, 1.0f*params.shadowWeight - params.shadowTransp);
-	CompositeWrapper background(context, backgroundFrameBuffer);
-	CompositeWrapper backgroundTransp(context, 1.0f*params.bgWeight - params.bgTransparency);
-	CompositeWrapper backgroundColor(context, params.bgColor[0], params.bgColor[1], params.bgColor[2], 1.0f);
-
-	// background * (1-min(alpha+sc*shadowTransp*(1-shadowColor), 1)) + color*alpha 
-	CompositeWrapper step1 = noAlpha * opacity + noAlpha * shadowCatcher * shadowTransp * (const1 - shadowColor);
-	CompositeWrapper step2 = const1 - CompositeWrapper::min(step1, const1);
-	CompositeWrapper res = background * backgroundTransp * backgroundColor * step2 + noAlpha * color * opacity;
-
-	// write result to output
-	frw::FrameBuffer frameBufferOut = GetOutFrameBuffer(params, context);
-	res.Compute(frameBufferOut);
-	doOutputFromComposites(params, GetDataSize(colorFrameBuffer), frameBufferOut);
-}
-
-// -----------------------------------------------------------------------------
-void FireRenderContext::compositeReflectionCatcherOutput(const ReadFrameBufferRequestParams& params)
-{
-	RPR_THREAD_ONLY;
-
-	// get data from frame buffers
-	rpr_framebuffer frameBufferColor = frameBufferAOV_Resolved(RPR_AOV_COLOR);
-	rpr_framebuffer opacityFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_OPACITY);
-	rpr_framebuffer reflectionCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_REFLECTION_CATCHER);
-	rpr_framebuffer backgroundFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_BACKGROUND);
-
-	// inputs
-	frw::Context context = GetContext();
-	CompositeWrapper noAlpha(context, 1.0f, 0.0f);
-	CompositeWrapper color(context, frameBufferColor);
-	CompositeWrapper opacity(context, opacityFrameBuffer);
-	CompositeWrapper reflectionCatcher(context, reflectionCatcherFrameBuffer);
-	CompositeWrapper const1(context, 1.0f);
-	CompositeWrapper background(context, backgroundFrameBuffer);
-	CompositeWrapper backgroundTransp(context, 1.0f*params.bgWeight - params.bgTransparency);
-	CompositeWrapper backgroundColor(context, params.bgColor[0], params.bgColor[1], params.bgColor[2], 1.0f);
-
-	// background * (1-alpha) + color * (alpha+rc)
-	CompositeWrapper step1 = const1 - noAlpha * opacity;
-	CompositeWrapper step2 = background * backgroundTransp * backgroundColor * step1;
-	CompositeWrapper res = step2 + color * (noAlpha * opacity + reflectionCatcher);
-
-	// write result to output
-	frw::FrameBuffer frameBufferOut = GetOutFrameBuffer(params, context);
-	res.Compute(frameBufferOut);
-	doOutputFromComposites(params, GetDataSize(frameBufferColor), frameBufferOut);
-}
-
-void FireRenderContext::compositeReflectionShadowCatcherOutput(const ReadFrameBufferRequestParams& params)
-{
-	RPR_THREAD_ONLY;
-	
-	// get data from frame buffers
-	rpr_framebuffer frameBufferColor = frameBufferAOV_Resolved(RPR_AOV_COLOR);
-	rpr_framebuffer opacityFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_OPACITY);
-	rpr_framebuffer reflectionCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_REFLECTION_CATCHER);
-	rpr_framebuffer backgroundFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_BACKGROUND);
-	rpr_framebuffer shadowCatcherFrameBuffer = frameBufferAOV_Resolved(RPR_AOV_SHADOW_CATCHER);
-
-	// inputs
-	frw::Context context = GetContext();
-	CompositeWrapper noAlpha(context, 1.0f, 0.0f);
-	CompositeWrapper color(context, frameBufferColor);
-	CompositeWrapper opacity(context, opacityFrameBuffer);
-	CompositeWrapper reflectionCatcher(context, reflectionCatcherFrameBuffer);
-	CompositeWrapper shadowCatcher(context, shadowCatcherFrameBuffer);
-	CompositeWrapper shadowColor(context, params.shadowColor[0], params.shadowColor[1], params.shadowColor[2], 1.0f);
-	CompositeWrapper const1(context, 1.0f);
-	CompositeWrapper shadowTransp(context, 1.0f*params.shadowWeight - params.shadowTransp);
-	CompositeWrapper background(context, backgroundFrameBuffer);
-	CompositeWrapper backgroundTransp(context, 1.0f*params.bgWeight - params.bgTransparency);
-	CompositeWrapper backgroundColor(context, params.bgColor[0], params.bgColor[1], params.bgColor[2], 1.0f);
-
-	// background * (1-min(alpha+sc, 1)) + color*(alpha+rc)
-	CompositeWrapper step1 = noAlpha * opacity + noAlpha * shadowCatcher * shadowTransp * (const1 - shadowColor);
-	CompositeWrapper step2 = const1 - CompositeWrapper::min(step1, const1);
-	CompositeWrapper step3 = color * (noAlpha * opacity + reflectionCatcher);
-	CompositeWrapper res = background * backgroundTransp * backgroundColor * step2 + step3;
-
-	// write result to output
-	frw::FrameBuffer frameBufferOut = GetOutFrameBuffer(params, context);
-	res.Compute(frameBufferOut);
-	doOutputFromComposites(params, GetDataSize(frameBufferColor), frameBufferOut);
 }
 
 RenderType FireRenderContext::GetRenderType() const
@@ -3507,10 +3353,7 @@ std::vector<float> FireRenderContext::DenoiseAndUpscaleForViewport()
 	params.mergeOpacity = false;
 	params.mergeShadowCatcher = true;
 	params.shadowColor = m_shadowColor;
-	params.bgColor = m_bgColor;
-	params.bgWeight = m_bgWeight;
 	params.shadowTransp = m_shadowTransparency;
-	params.bgTransparency = m_backgroundTransparency;
 	params.shadowWeight = m_shadowWeight;
 
 	// read frame buffers
@@ -3569,10 +3412,7 @@ bool FireRenderContext::TonemapIntoRAM()
 	params.mergeOpacity = false;
 	params.mergeShadowCatcher = true;
 	params.shadowColor = m_shadowColor;
-	params.bgColor = m_bgColor;
-	params.bgWeight = m_bgWeight;
 	params.shadowTransp = m_shadowTransparency;
-	params.bgTransparency = m_backgroundTransparency;
 	params.shadowWeight = m_shadowWeight;
 
 	// read frame buffer
@@ -3625,10 +3465,7 @@ std::vector<float> FireRenderContext::DenoiseIntoRAM()
 	params.mergeOpacity = false;
 	params.mergeShadowCatcher = true;
 	params.shadowColor = m_shadowColor;
-	params.bgColor = m_bgColor;
-	params.bgWeight = m_bgWeight;
 	params.shadowTransp = m_shadowTransparency;
-	params.bgTransparency = m_backgroundTransparency;
 	params.shadowWeight = m_shadowWeight;
 	
 	// read frame buffers

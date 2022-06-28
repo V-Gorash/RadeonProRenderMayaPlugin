@@ -636,9 +636,6 @@ void FireRenderIpr::readFrameBuffer()
 	params.shadowColor = m_contextPtr->m_shadowColor;
 	params.shadowTransp = m_contextPtr->m_shadowTransparency;
 	params.shadowWeight = m_contextPtr->m_shadowWeight;
-	params.bgWeight = m_contextPtr->m_bgWeight;
-	params.bgTransparency = m_contextPtr->m_backgroundTransparency;
-	params.bgColor = m_contextPtr->m_bgColor;
 
 	// process frame buffer	
 	m_contextPtr->readFrameBuffer(params);
