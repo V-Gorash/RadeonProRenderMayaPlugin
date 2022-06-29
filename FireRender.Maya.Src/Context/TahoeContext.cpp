@@ -83,10 +83,6 @@ rpr_int NorthStarContext::CreateContextInternal(rpr_creation_flags createFlags, 
 #else
 	int res = rprCreateContext(RPR_API_VERSION, plugins, pluginCount, createFlags, ctxProperties.data(), cachePath.asUTF8(), pContext);
 #endif
-
-	// disable built-in shadow catcher composite
-	rprContextSetParameterByKey1u(*pContext, RPR_CONTEXT_SHADOW_CATCHER_BAKING, (rpr_uint)0);
-
 	return res;
 }
 
@@ -354,6 +350,13 @@ void NorthStarContext::setupContextPostSceneCreation(const FireRenderGlobalsData
 	updateTonemapping(fireRenderGlobalsData, disableWhiteBalance);
 
 	frstatus = rprContextSetParameterByKeyString(frcontext, RPR_CONTEXT_TEXTURE_CACHE_PATH, fireRenderGlobalsData.textureCachePath.asChar());
+	checkStatus(frstatus);
+
+	// disable built-in shadow catcher composite
+	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_SHADOW_CATCHER_BAKING, 0);
+	checkStatus(frstatus);
+
+	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_IBL_DISPLAY, fireRenderGlobalsData.IBLDisplayEnabled ? 1 : 0);
 	checkStatus(frstatus);
 
 	// OCIO

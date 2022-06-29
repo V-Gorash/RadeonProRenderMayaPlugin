@@ -361,6 +361,9 @@ public:
 	bool cryptomatteExtendedMode;
 	bool cryptomatteSplitIndirect;
 
+	// IBL display settings
+	bool IBLDisplayEnabled;
+
 private:
 	short getMaxRayDepth(const FireRenderContext& context) const;
 	short getSamples(const FireRenderContext& context) const;
@@ -458,9 +461,6 @@ MPlug GetRadeonProRenderGlobalsPlug(const char* name, MStatus* status = nullptr)
 
 // Is IBL image fliping switched on
 bool IsFlipIBL();
-
-// Is IBL display switched on
-bool IsDisplayIBL();
 
 // Get Render Size from Common Tab
 void GetResolutionFromCommonTab(unsigned int& width, unsigned int& height);

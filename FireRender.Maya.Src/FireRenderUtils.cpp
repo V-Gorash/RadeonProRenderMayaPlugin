@@ -507,6 +507,10 @@ void FireRenderGlobalsData::readFromCurrentScene()
 		if (!plug.isNull())
 			cryptomatteSplitIndirect = plug.asBool();
 
+		plug = frGlobalsNode.findPlug("displayIBL");
+		if (!plug.isNull())
+			IBLDisplayEnabled = plug.asBool();
+
 		aovs.readFromGlobals(frGlobalsNode);
 
 		readDenoiserParameters(frGlobalsNode);
@@ -1650,18 +1654,6 @@ bool IsFlipIBL()
 	if (!flipPlug.isNull())
 	{
 		return flipPlug.asBool();
-	}
-
-	return false;
-}
-
-bool IsDisplayIBL()
-{
-	MPlug displayPlug = GetRadeonProRenderGlobalsPlug("displayIBL");
-
-	if (!displayPlug.isNull())
-	{
-		return displayPlug.asBool();
 	}
 
 	return false;

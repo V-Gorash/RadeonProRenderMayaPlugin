@@ -807,9 +807,6 @@ namespace FireMaya
 			scaleM[0][0] = -scaleM[0][0];
 		}
 
-		bool isIBLDisplayed = IsDisplayIBL();
-		frcontext.SetParameter(RPR_CONTEXT_IBL_DISPLAY, isIBLDisplayed);
-
 		m = scaleM * m;
 		float mfloats[4][4];
 		m.get(mfloats);
