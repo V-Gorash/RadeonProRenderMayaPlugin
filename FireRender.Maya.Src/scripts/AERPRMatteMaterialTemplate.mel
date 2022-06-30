@@ -50,17 +50,8 @@ global proc AEMatteCheckEnableRC(string $nodeName)
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovBackground 1;
 		setAttr RadeonProRenderGlobals.aovOpacity 1;
-		
-		// Disable IBL visibility
-		setAttr RadeonProRenderGlobals.displayIBL 0;
-	}
-	else
-	{
-		// Enable IBL visibility
-		setAttr RadeonProRenderGlobals.displayIBL -lock 0;
-		setAttr RadeonProRenderGlobals.displayIBL 1;
-	}
 	
+	}
 }
 
 global proc AERPRMatteMaterialTemplate( string $nodeName )

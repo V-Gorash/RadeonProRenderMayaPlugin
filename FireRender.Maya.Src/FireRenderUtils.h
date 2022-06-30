@@ -361,8 +361,9 @@ public:
 	bool cryptomatteExtendedMode;
 	bool cryptomatteSplitIndirect;
 
-	// IBL display settings
-	bool IBLDisplayEnabled;
+	// SC and RC settins
+	bool shadowCatcherEnabled;
+	bool reflectionCatcherEnabled;
 
 private:
 	short getMaxRayDepth(const FireRenderContext& context) const;

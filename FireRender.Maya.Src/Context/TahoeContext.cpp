@@ -352,11 +352,12 @@ void NorthStarContext::setupContextPostSceneCreation(const FireRenderGlobalsData
 	frstatus = rprContextSetParameterByKeyString(frcontext, RPR_CONTEXT_TEXTURE_CACHE_PATH, fireRenderGlobalsData.textureCachePath.asChar());
 	checkStatus(frstatus);
 
-	// disable built-in shadow catcher composite
-	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_SHADOW_CATCHER_BAKING, 0);
+	// SC and RC
+	// we should disable built-in shadow catcher composite
+	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_SHADOW_CATCHER_BAKING, fireRenderGlobalsData.shadowCatcherEnabled ? 0 : 1);
 	checkStatus(frstatus);
-
-	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_IBL_DISPLAY, fireRenderGlobalsData.IBLDisplayEnabled ? 1 : 0);
+	// we should disable IBL visibility to correctly composite reflection catcher
+	frstatus = rprContextSetParameterByKey1u(frcontext, RPR_CONTEXT_IBL_DISPLAY, fireRenderGlobalsData.reflectionCatcherEnabled ? 0 : 1);
 	checkStatus(frstatus);
 
 	// OCIO

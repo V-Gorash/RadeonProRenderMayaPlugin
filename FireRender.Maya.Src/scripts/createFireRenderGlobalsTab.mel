@@ -282,15 +282,12 @@ global proc reflectionCatcherStateChanged()
 		// Lock controls and set it to ON state
 		setAttr RadeonProRenderGlobals.aovBackground -lock 1 1;
 		setAttr RadeonProRenderGlobals.aovOpacity -lock 1 1;
-		setAttr RadeonProRenderGlobals.displayIBL -lock 1 0;
 	}
 	else
 	{
 		// Unlock controls
 		setAttr RadeonProRenderGlobals.aovBackground -lock 0;
 		setAttr RadeonProRenderGlobals.aovOpacity -lock 0;
-		setAttr RadeonProRenderGlobals.displayIBL -lock 0;
-		setAttr RadeonProRenderGlobals.displayIBL 1;
 	}
 }
 

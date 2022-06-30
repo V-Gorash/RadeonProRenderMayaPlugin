@@ -70,7 +70,6 @@ namespace
 		MObject AAGridSize;
 		MObject ibl;
 		MObject flipIBL;
-		MObject displayIBL;
 		MObject sky;
 		MObject commandPort;
 
@@ -371,10 +370,6 @@ MStatus FireRenderGlobals::initialize()
 	MAKE_INPUT(nAttr);
 	nAttr.setReadable(true);
 
-	Attribute::displayIBL = nAttr.create("displayIBL", "dibl", MFnNumericData::kBoolean, true, &status);
-	MAKE_INPUT(nAttr);
-	nAttr.setReadable(true);
-
 	Attribute::sky = mAttr.create("sky", "sky");
 	MAKE_INPUT(mAttr);
 
@@ -562,7 +557,6 @@ MStatus FireRenderGlobals::initialize()
 	CHECK_MSTATUS(addAttribute(Attribute::AAGridSize));
 	CHECK_MSTATUS(addAttribute(Attribute::ibl));
 	CHECK_MSTATUS(addAttribute(Attribute::flipIBL));
-	CHECK_MSTATUS(addAttribute(Attribute::displayIBL));
 	CHECK_MSTATUS(addAttribute(Attribute::sky));
 	CHECK_MSTATUS(addAttribute(Attribute::commandPort));
 	CHECK_MSTATUS(addAttribute(Attribute::motionBlur));
