@@ -24,13 +24,21 @@ global proc AEMatteCheckEnableSC(string $nodeName)
 	editorTemplate -dimControl $nodeName "useDispMap" ($value == 0);
 	editorTemplate -dimControl $nodeName "dispMap" ($value == 0);
 
-	setAttr RadeonProRenderGlobals.aovShadowCatcher ($value);
 
 	int $isShadowCatcher = `getAttr RadeonProRenderGlobals.aovShadowCatcher`;
-	if ($isShadowCatcher == 1)
+	
+	// user turns on shadow catcher
+	if ($isShadowCatcher == 0  && $value == 1)
 	{
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovMattePass 1;
+		setAttr RadeonProRenderGlobals.aovShadowCatcher 1;
+	}
+	
+	// user turns off shadow catcher
+	if ($isShadowCatcher == 1  && $value == 0)
+	{
+		setAttr RadeonProRenderGlobals.aovShadowCatcher 0;
 	}
 }
 
@@ -42,15 +50,23 @@ global proc AEMatteCheckEnableRC(string $nodeName)
 	editorTemplate -dimControl $nodeName "reflectionRoughness" ($value == 0);
 	editorTemplate -dimControl $nodeName "reflectionWeight" ($value == 0);
 
-	setAttr RadeonProRenderGlobals.aovReflectionCatcher ($value);
 
 	int $isReflectionCatcher = `getAttr RadeonProRenderGlobals.aovReflectionCatcher`;
-	if ($isReflectionCatcher == 1)
+	
+	// user turns on reflection catcher
+	if ($isReflectionCatcher == 0 && $value == 1)
 	{
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovBackground 1;
 		setAttr RadeonProRenderGlobals.aovOpacity 1;
+		setAttr RadeonProRenderGlobals.aovReflectionCatcher 1;
 	
+	}
+	
+	// user turns off reflection catcher
+	if ($isReflectionCatcher == 1 && $value == 0)
+	{
+		setAttr RadeonProRenderGlobals.aovReflectionCatcher 0;
 	}
 }
 
