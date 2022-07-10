@@ -30,6 +30,9 @@ global proc AEMatteCheckEnableSC(string $nodeName)
 	// user turns on shadow catcher
 	if ($isShadowCatcher == 0  && $value == 1)
 	{
+		// Unlock if AOV is already locked
+		setAttr RadeonProRenderGlobals.aovMattePass -lock 0;
+		
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovMattePass 1;
 		setAttr RadeonProRenderGlobals.aovShadowCatcher 1;
@@ -56,6 +59,10 @@ global proc AEMatteCheckEnableRC(string $nodeName)
 	// user turns on reflection catcher
 	if ($isReflectionCatcher == 0 && $value == 1)
 	{
+		// Unlock if AOV is already locked
+		setAttr RadeonProRenderGlobals.aovBackground -lock 0;
+		setAttr RadeonProRenderGlobals.aovOpacity -lock 0;
+	
 		// Set aovs to ON state
 		setAttr RadeonProRenderGlobals.aovBackground 1;
 		setAttr RadeonProRenderGlobals.aovOpacity 1;
