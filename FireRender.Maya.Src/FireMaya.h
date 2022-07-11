@@ -94,6 +94,7 @@ namespace FireMaya
 			FireRenderVolumeLocator,
 			FireRenderToonMaterial,
 			FireRenderVoronoi,
+			FireRenderRamp,
 
 			// ^ always add new ids to end of list (max 128 entries here)
 			FireRenderNodeIdEndCurrent, // <- this value is allowed to change, it marks the end of current list
@@ -352,6 +353,10 @@ namespace FireMaya
 	const MString MAYA_FILE_NODE_OUTPUT_COLOR_COMPONENT_GREEN = "ocg";
 	const MString MAYA_FILE_NODE_OUTPUT_COLOR_COMPONENT_BLUE = "ocb";
 	const MString MAYA_FILE_NODE_OUTPUT_ALPHA = "oa";
+	const MString MAYA_FILE_NODE_OUTPUT_TRANSPARENCY = "ot";
+	const MString MAYA_FILE_NODE_OUTPUT_TRANSPARENCY_R = "otr";
+	const MString MAYA_FILE_NODE_OUTPUT_TRANSPARENCY_G = "otg";
+	const MString MAYA_FILE_NODE_OUTPUT_TRANSPARENCY_B = "otb";
 }
 // End of namespace FireMaya
 
